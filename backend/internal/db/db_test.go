@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// TestInitDB tests database initialization
 func TestInitDB(t *testing.T) {
 	db, err := db.InitDB()
 	if err != nil {

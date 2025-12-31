@@ -8,6 +8,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// InitDB initializes driver and connection pool for connecting to postgres
+// database with connection information
 func InitDB() (*sql.DB, error) {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
