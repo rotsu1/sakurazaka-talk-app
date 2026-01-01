@@ -15,11 +15,23 @@ func setupTestDB(t *testing.T) *sql.DB {
 	if err != nil {
 		log.Println("DB connection failed:", err)
 	}
-	if _, err := db.Exec(`
-    DROP TABLE IF EXISTS member, staff, message, talk_user, talk_user_member,
-    template, fanletter, blog, notification, official_news, message_read, 
-		schema_migrations CASCADE
-`); err != nil {
+	const dropTableSQL = `
+	DROP TABLE IF EXISTS 
+			member, 
+			staff, 
+			message, 
+			talk_user, 
+			talk_user_member,
+    	template, 
+			fanletter, 
+			blog, 
+			notification, 
+			official_news, 
+			message_read, 
+			schema_migrations 
+	CASCADE;
+	`
+	if _, err := db.Exec(dropTableSQL); err != nil {
 		t.Fatal("Failed to truncate tables:", err)
 	}
 
@@ -56,14 +68,14 @@ func TestMigrationsTablesExist(t *testing.T) {
 	for _, table := range expectedTables {
 		var exists bool
 		query := fmt.Sprintf(`
-			SELECT EXISTS (
-					SELECT 1
-					FROM information_schema.tables
-					WHERE table_schema = 'public'
+		SELECT EXISTS (
+				SELECT 1
+				FROM information_schema.tables
+				WHERE table_schema = 'public'
 					AND table_name = '%s'
-			)
-			`, table,
-		)
+		);
+		`, table)
+
 		err := db.QueryRow(query).Scan(&exists)
 		if err != nil {
 			t.Fatalf("failed to query table %s: %v", table, err)

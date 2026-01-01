@@ -11,12 +11,13 @@ import (
 // been applied yet.
 func RunMigrations(db *sql.DB) error {
 	// Ensure schema_migrations table exists
-	if _, err := db.Exec(
-		`CREATE TABLE IF NOT EXISTS schema_migrations (
-				version TEXT PRIMARY KEY,
-				applied_at TIMESTAMP NOT NULL DEFAULT NOW()
-		)`,
-	); err != nil {
+	const schemaMigrationSQL = `
+	CREATE TABLE IF NOT EXISTS schema_migrations (
+			version TEXT PRIMARY KEY,
+			applied_at TIMESTAMP NOT NULL DEFAULT NOW()
+	);
+	`
+	if _, err := db.Exec(schemaMigrationSQL); err != nil {
 		return err
 	}
 
