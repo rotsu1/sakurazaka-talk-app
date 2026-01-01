@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -10,7 +11,7 @@ import (
 
 // InitDB initializes driver and connection pool for connecting to postgres
 // database with connection information
-func InitDB() (*sql.DB, error) {
+func InitDB() *sql.DB {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
@@ -23,9 +24,14 @@ func InitDB() (*sql.DB, error) {
 	)
 
 	db, err := sql.Open("postgres", psqlInfo)
+
 	if err != nil {
-		return nil, err
+		log.Fatal("Failed to connect to DB:", err)
 	}
 
-	return db, nil
+	if err := db.Ping(); err != nil {
+		log.Fatal("Failed to ping DB:", err)
+	}
+
+	return db
 }
