@@ -226,10 +226,11 @@ func saveTemplate(t *testing.T, db *sql.DB, tp *models.Template) {
 
 // createNewMessageRead creates new message_read instance
 func createNewMessageRead(messageID, userID int) *models.MessageRead {
+	readAt := time.Now().Truncate(time.Second)
 	return &models.MessageRead{
 		MessageID: messageID,
 		UserID:    userID,
-		ReadAt:    time.Now().Truncate(time.Second), // Truncate to avoid microsecond differences in DB tests
+		ReadAt:    &readAt, // Truncate to avoid microsecond differences in DB tests
 	}
 }
 
