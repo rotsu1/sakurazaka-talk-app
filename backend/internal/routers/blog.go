@@ -79,7 +79,12 @@ func CreateBlog(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := b.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
