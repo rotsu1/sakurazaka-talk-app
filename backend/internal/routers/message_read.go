@@ -93,7 +93,12 @@ func CreateMessageReadByID(
 		return
 	}
 	if err := mr.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -113,10 +118,15 @@ func UpdateMessageRead(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := mr.Update(db); err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Message Read not found", http.StatusNotFound)
-		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			if err == sql.ErrNoRows {
+				http.Error(w, "Message Read not found", http.StatusNotFound)
+			} else {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
 		}
 		return
 	}

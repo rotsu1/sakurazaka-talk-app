@@ -78,7 +78,12 @@ func CreateTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := t.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -115,7 +120,12 @@ func UpdateTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	t.ID = id
 
 	if err := t.Update(db); err != nil {
-		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

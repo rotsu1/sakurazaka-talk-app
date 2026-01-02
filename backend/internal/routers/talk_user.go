@@ -22,6 +22,8 @@ func RegisterTalkUserRoutes(mux *http.ServeMux, db *sql.DB) {
 			}
 		case http.MethodPost:
 			CreateTalkUser(db, w, r)
+		case http.MethodPut:
+			UpdateTalkUser(db, w, r)
 		case http.MethodDelete:
 			DeleteTalkUser(db, w, r)
 		default:
@@ -81,6 +83,32 @@ func CreateTalkUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(tu); err != nil {
 		http.Error(w, "Failed to encode talk user", http.StatusInternalServerError)
 	}
+}
+
+func UpdateTalkUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Path[len("/talk_user/"):]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid talk user ID", http.StatusBadRequest)
+		return
+	}
+
+	if _, err := models.FindTalkUserByID(db, id); err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "TalkUser not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	tu := models.TalkUser{ID: id}
+	if err := tu.Update(db); err != nil {
+		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func DeleteTalkUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {

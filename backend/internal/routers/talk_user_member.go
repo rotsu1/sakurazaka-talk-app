@@ -78,7 +78,12 @@ func CreateTalkUserMember(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := tum.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -118,7 +123,12 @@ func UpdateTalkUserMember(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	tum.MemberID = existing.MemberID // Preserve MemberID
 
 	if err := tum.Update(db); err != nil {
-		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

@@ -78,7 +78,12 @@ func CreateMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := m.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -117,7 +122,12 @@ func UpdateMessage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	m.MemberID = existing.MemberID // Preserve member_id
 
 	if err := m.Update(db); err != nil {
-		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

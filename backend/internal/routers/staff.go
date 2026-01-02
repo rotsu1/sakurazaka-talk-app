@@ -78,7 +78,12 @@ func CreateStaff(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.Save(db); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -115,7 +120,12 @@ func UpdateStaff(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	s.ID = id
 
 	if err := s.Update(db); err != nil {
-		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		switch models.ClassifyDBError(err) {
+		case models.ErrInvalidReference, models.ErrInvalidData:
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		default:
+			http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
