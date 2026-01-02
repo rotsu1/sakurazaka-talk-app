@@ -8,7 +8,7 @@ import (
 type MessageRead struct {
 	MessageID int
 	UserID    int
-	ReadAt    *time.Time
+	ReadAt    time.Time
 }
 
 func (mr *MessageRead) Save(db *sql.DB) error {
