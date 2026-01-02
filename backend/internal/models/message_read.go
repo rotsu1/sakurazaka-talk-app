@@ -8,7 +8,7 @@ import (
 type MessageRead struct {
 	MessageID int
 	UserID    int
-	ReadAt    time.Time
+	ReadAt    *time.Time
 }
 
 func (mr *MessageRead) Save(db *sql.DB) error {
@@ -28,11 +28,45 @@ func (mr *MessageRead) Save(db *sql.DB) error {
 	return err
 }
 
+func (mr *MessageRead) Update(db *sql.DB) error {
+	query := `
+	UPDATE message_read SET
+			read_at = NOW()
+	WHERE message_id = $1 AND user_id = $2
+	`
+	result, err := db.Exec(
+		query,
+		mr.MessageID,
+		mr.UserID,
+	)
+
+	rowsEffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsEffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return err
+}
+
 func (mr *MessageRead) Delete(db *sql.DB) error {
 	query := `
 	DELETE FROM message_read 
 	WHERE message_id = $1 AND user_id = $2`
-	_, err := db.Exec(query, mr.MessageID, mr.UserID)
+	result, err := db.Exec(query, mr.MessageID, mr.UserID)
+
+	rowsEffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsEffected == 0 {
+		return sql.ErrNoRows
+	}
+
 	return err
 }
 
