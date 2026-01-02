@@ -51,7 +51,7 @@ func (b *Blog) Update(db *sql.DB) error {
 			verified_at = $6, 
 			updated_at = NOW() 
 	WHERE id = $7`
-	_, err := db.Exec(
+	result, err := db.Exec(
 		query,
 		b.MemberID,
 		b.Title,
@@ -61,7 +61,18 @@ func (b *Blog) Update(db *sql.DB) error {
 		b.VerifiedAt,
 		b.ID,
 	)
-	return err
+
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
 }
 
 func FindBlogByID(db *sql.DB, id int) (*Blog, error) {
