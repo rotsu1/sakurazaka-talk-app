@@ -85,6 +85,7 @@ func TestUpdateBlog(t *testing.T) {
 	saveBlog(t, db, b)
 
 	updatedBlog := createNewBlog(m.ID, "Updated Title")
+	updatedBlog.ID = b.ID
 	body, _ := json.Marshal(updatedBlog)
 
 	rr := helperServeHTTP(
