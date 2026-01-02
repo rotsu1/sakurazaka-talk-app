@@ -186,6 +186,20 @@ func saveTemplate(t *testing.T, db *sql.DB, tmpl *models.Template) {
 	}
 }
 
+func createNewMessageRead(messageID, userID int) *models.MessageRead {
+	return &models.MessageRead{
+		MessageID: messageID,
+		UserID:    userID,
+	}
+}
+
+func saveMessageRead(t *testing.T, db *sql.DB, mr *models.MessageRead) {
+	t.Helper()
+	if err := mr.Save(db); err != nil {
+		t.Fatalf("Failed to save message read: %v", err)
+	}
+}
+
 // Helper to serve HTTP request and returns response recorder
 func helperServeHTTP(
 	method string,
