@@ -92,43 +92,18 @@ func CreateBlog(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateBlog(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Path[len("/blog/"):]
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "Invalid blog ID", http.StatusBadRequest)
-		return
-	}
-
 	var b models.Blog
 	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		http.Error(w, "Invalid JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res, err := db.Exec(
-		`UPDATE blog
-		 SET title = $1, content = $2, status = $3, verified_by = $4, verified_at = $5, updated_at = NOW()
-		 WHERE id = $6`,
-		b.Title,
-		b.Content,
-		b.Status,
-		b.VerifiedBy,
-		b.VerifiedAt,
-		id,
-	)
-	if err != nil {
-		http.Error(w, "Update failed: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		http.Error(w, "Could not get affected rows: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if rowsAffected == 0 {
-		http.Error(w, "Blog not found", http.StatusNotFound)
+	if err := b.Update(db); err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "Blog not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
