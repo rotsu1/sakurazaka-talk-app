@@ -28,7 +28,7 @@ struct HeaderView: View {
                                 .font(.caption)
                                 .foregroundColor(Color.white)
                                 .frame(width: 20, height: 20) 
-                                .background(Circle().fill(Color.rgb(red: 255, green: 149, blue: 228)))
+                                .background(Circle().fill(Color.rgb(red: 241, green: 157, blue: 181)))
                                 .padding(4)
                                 .offset(x: 12, y: -12)
                         }
@@ -42,7 +42,7 @@ struct HeaderView: View {
             .padding(.horizontal, 8)
         }
         .padding(.bottom, 16)
-        .foregroundColor(Color.rgb(red: 255, green: 149, blue: 228))
+        .foregroundColor(Color.rgb(red: 241, green: 157, blue: 181))
         .overlay(
             Rectangle()
                 .fill(
@@ -62,5 +62,5 @@ struct HeaderView: View {
 }
 
 #Preview {
-    Header(title: "トーク")
+    HeaderView(title: "トーク")
 }
