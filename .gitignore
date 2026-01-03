@@ -20,3 +20,17 @@ yarn-error.log
 .idea/
 *.swp
 
+# Swift / Xcode
+DerivedData/
+.build/
+Packages/
+Package.resolved
+
+# Xcode project noise
+**/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.swiftpm/xcode/package.xcworkspace/
+.swiftpm/configuration/
