@@ -11,6 +11,8 @@ struct HeaderView: View {
     let title: String
     let icons: Bool
     let isBlog: Bool
+    let isSubpage: Bool
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         ZStack {
@@ -18,6 +20,16 @@ struct HeaderView: View {
                 .font(.headline)
 
             HStack {
+                if isSubpage {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 24))
+                            .padding(.leading, 8)
+                    }
+                }
+
                 Spacer()
 
                 if icons {
@@ -70,5 +82,5 @@ struct HeaderView: View {
 }
 
 #Preview {
-    HeaderView(title: "トーク", icons: true, isBlog: false)
+    HeaderView(title: "トーク", icons: true, isBlog: false, isSubpage: false)
 }
