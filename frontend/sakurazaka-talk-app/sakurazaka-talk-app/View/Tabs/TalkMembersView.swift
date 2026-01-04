@@ -101,7 +101,7 @@ struct TalkMembersView: View {
                                     .frame(width: 96, height: 96)
                                 Text(name)
                             }
-                            .foregroundColor(Color.rgb(red: 241, green: 157, blue: 181))
+                            .foregroundColor(sakuraPink)
                             .padding(.bottom, 16)
                         }
                     }
@@ -122,8 +122,8 @@ struct GenerationHeader: View {
                 .font(.headline)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
-                .background(Color.white.opacity(0.9)) // Background for sticky effect
-                .foregroundColor(Color.rgb(red: 241, green: 157, blue: 181)) // Your theme pink
+                .background(Color.white.opacity(0.9))
+                .foregroundColor(sakuraPink) 
         }
         .frame(maxWidth: .infinity)
         .background(Color.white) 

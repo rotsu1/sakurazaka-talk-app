@@ -15,3 +15,5 @@ extension Color {
         return self.init(red: red/255, green: green/255, blue: blue/255, opacity: opacity)
     }
 }
+
+let sakuraPink = Color.rgb(red: 241, green: 157, blue: 181)
