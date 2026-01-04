@@ -1,5 +1,5 @@
 //
-//  TalkMembersView.swift
+//  TalkTabView.swift
 //  sakurazaka-talk-app
 //
 //  Created by 乙津　龍　 on 3/1/2026.
@@ -70,7 +70,7 @@ let memberData: [MemberGroup] = [
 ]
 
 
-struct TalkMembersView: View {
+struct TalkTabView: View {
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -131,5 +131,5 @@ struct GenerationHeader: View {
 }
 
 #Preview {
-    TalkMembersView()
+    TalkTabView()
 }

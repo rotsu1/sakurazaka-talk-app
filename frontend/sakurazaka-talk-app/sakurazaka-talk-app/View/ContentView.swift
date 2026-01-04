@@ -12,7 +12,7 @@ struct ContentView: View {
         NavigationStack {
             TabView {
                 Tab("Talk", systemImage: "bubble.right") {
-                    TalkMembersView()
+                    TalkTabView()
                 }
                 Tab("Blog", systemImage: "text.page") {
 
