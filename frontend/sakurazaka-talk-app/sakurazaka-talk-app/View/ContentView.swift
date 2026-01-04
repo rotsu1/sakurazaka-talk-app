@@ -15,7 +15,7 @@ struct ContentView: View {
                     TalkTabView()
                 }
                 Tab("Blog", systemImage: "text.page") {
-
+                    BlogTabView()
                 }
                 Tab("News", systemImage: "megaphone") {
 
