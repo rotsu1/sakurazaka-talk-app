@@ -38,7 +38,7 @@ struct HeaderView: View {
                             Image(systemName: "arrow.up.arrow.down")
                                 .font(.system(size: 24))
                         }
-                        NavigationLink(destination: NotificationView()) {
+                        NavigationLink(destination: NotificationListView()) {
                             ZStack(alignment: .topTrailing){
                                 Image(systemName: "bell")
                                     .font(.system(size: 24))
