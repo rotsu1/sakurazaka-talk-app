@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HeaderView: View {
     let title: String
+    let icons: Bool
+    let isBlog: Bool
 
     var body: some View {
         ZStack {
@@ -18,24 +20,30 @@ struct HeaderView: View {
             HStack {
                 Spacer()
 
-                HStack {
-                    NavigationLink(destination: NotificationView()) {
-                        ZStack(alignment: .topTrailing){
-                            Image(systemName: "bell")
+                if icons {
+                    HStack(spacing: 16) {
+                        if isBlog {
+                            Image(systemName: "arrow.up.arrow.down")
                                 .font(.system(size: 24))
-
-                            Text("20")
-                                .font(.caption)
-                                .foregroundColor(Color.white)
-                                .frame(width: 20, height: 20) 
-                                .background(Circle().fill(sakuraPink))
-                                .padding(4)
-                                .offset(x: 12, y: -12)
                         }
-                    }
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gearshape")
-                            .font(.system(size: 24))
+                        NavigationLink(destination: NotificationView()) {
+                            ZStack(alignment: .topTrailing){
+                                Image(systemName: "bell")
+                                    .font(.system(size: 24))
+
+                                Text("20")
+                                    .font(.caption)
+                                    .foregroundColor(Color.white)
+                                    .frame(width: 20, height: 20) 
+                                    .background(Circle().fill(sakuraPink))
+                                    .padding(4)
+                                    .offset(x: 12, y: -12)
+                            }
+                        }
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 24))
+                        }
                     }
                 }
             }
@@ -62,5 +70,5 @@ struct HeaderView: View {
 }
 
 #Preview {
-    HeaderView(title: "トーク")
+    HeaderView(title: "トーク", icons: true, isBlog: false)
 }

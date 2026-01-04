@@ -77,7 +77,7 @@ struct TalkMembersView: View {
         GridItem(.flexible()),
     ]
     var body: some View {
-        HeaderView(title: "Talk Members")
+        HeaderView(title: "トーク", icons: true, isBlog: false)
 
         ScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
