@@ -130,6 +130,7 @@ struct BlogItemView: View {
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color(white: 0.6))
                         .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                         .padding(.top, 8)
                     
                     Spacer()

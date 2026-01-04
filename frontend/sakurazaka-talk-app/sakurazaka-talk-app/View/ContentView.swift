@@ -18,7 +18,7 @@ struct ContentView: View {
                     BlogTabView()
                 }
                 Tab("News", systemImage: "megaphone") {
-
+                    NewsTabView()
                 }
                 Tab("Official", systemImage: "triangleshape") {
 
