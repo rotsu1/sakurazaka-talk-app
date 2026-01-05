@@ -74,21 +74,23 @@ struct ContentView: View {
     @State private var selectedTab: Tab = .talk
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Group {
-                switch selectedTab {
-                case .talk: TalkTabView()
-                case .blog: BlogTabView()
-                case .news: NewsTabView()
-                case .official: EmptyView()
-                case .fanclub: FanclubTabView()
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Group {
+                    switch selectedTab {
+                    case .talk: TalkTabView()
+                    case .blog: BlogTabView()
+                    case .news: NewsTabView()
+                    case .official: EmptyView()
+                    case .fanclub: FanclubTabView()
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                CustomTabBar(selectedTab: $selectedTab)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            CustomTabBar(selectedTab: $selectedTab)
+            .ignoresSafeArea(edges: .bottom)
         }
-        .ignoresSafeArea(edges: .bottom)
     }
 }
 
