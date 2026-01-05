@@ -9,11 +9,9 @@ import SwiftUI
 
 struct SettingsView: View {
     var body: some View {
-        // Use a VStack with spacing 0 to ensure the header and content touch
         VStack(spacing: 0) {
             HeaderView(title: "設定", icons: false, isBlog: false, isSubpage: true)
             
-            // This ScrollView will contain the gray background
             ScrollView {
                 VStack(spacing: 0) {
                     Group {
@@ -64,7 +62,7 @@ struct SettingsView: View {
                             link: EmptyView()
                         )
                     }
-                    .background(Color.white) // Makes the items white
+                    .background(Color.white)
                     
                     SettingsItem(
                         title: "「櫻坂46ファンクラブ」連携", 
@@ -72,7 +70,7 @@ struct SettingsView: View {
                         description: "", 
                         link: EmptyView()
                     )
-                    .background(Color.white) // Separate white block
+                    .background(Color.white)
                     .padding(.top, 16)
                 }
                 HStack {
@@ -84,7 +82,7 @@ struct SettingsView: View {
                 .foregroundColor(Color(white: 0.4))
                 .padding()
             }
-            .background(Color(white: 0.97)) // This is the light gray background for the page
+            .background(Color(white: 0.97))
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -112,6 +110,7 @@ struct SettingsItem<Destination: View>: View {
                         if description != "" {
                             Text(description)
                                 .font(.system(size: 14, weight: .regular))
+                                .foregroundColor(Color(white: 0.6))
                         }
                     }
                 }
