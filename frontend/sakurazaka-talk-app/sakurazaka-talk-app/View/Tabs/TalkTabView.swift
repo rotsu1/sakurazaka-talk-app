@@ -97,10 +97,21 @@ struct TalkTabView: View {
                             ForEach(memberGroup.names, id: \.self) { name in
                                 // Placeholder for member image
                                 VStack {
-                                    Circle()
-                                        .fill(Color.gray.opacity(0.3))
-                                        .frame(width: 96, height: 96)
-                                    Text(name)
+                                    if memberGroup.generation == "オンライン" {
+                                        NavigationLink(destination: TalkView()) {
+                                            VStack {
+                                                Circle()
+                                                    .fill(Color.gray.opacity(0.3))
+                                                    .frame(width: 96, height: 96)
+                                                Text(name)
+                                            }
+                                        }
+                                    } else {
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 96, height: 96)
+                                        Text(name)
+                                    }
                                 }
                                 .foregroundColor(sakuraPink)
                                 .padding(.bottom, 16)
