@@ -27,8 +27,9 @@ enum Tab: String, CaseIterable {
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Tab
+    @Environment(\.openURL) var openURL
 
-    let activeColor = sakuraPink
+    let activeColor = Color(red: 0.85, green: 0.45, blue: 0.55) // Sakura Pink
     let inactiveColor = Color.gray.opacity(0.6)
 
     var body: some View {
@@ -38,7 +39,15 @@ struct CustomTabBar: View {
             HStack(spacing: 0) {
                 ForEach(Tab.allCases, id: \.self) { tab in
                     Button {
-                        selectedTab = tab
+                        if tab == .official {
+                            // Open external browser
+                            if let url = URL(string: "https://sakurazaka46.com/") {
+                                openURL(url)
+                            }
+                        } else {
+                            // Normal tab switching
+                            selectedTab = tab
+                        }
                     } label: {
                         VStack(spacing: 4) {
                             Image(systemName: tab.icon)
@@ -48,14 +57,13 @@ struct CustomTabBar: View {
                                 .font(.system(size: 10, weight: .medium))
                         }
                         .frame(maxWidth: .infinity)
-
                         .padding(.vertical, 8)
+                        // Note: Official tab won't ever look "active" since it redirects away
                         .foregroundStyle(selectedTab == tab ? activeColor : inactiveColor)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 20)
+            .padding(.bottom, 34) // Standard iPhone bottom safe area height
             .background(Color.white)
         }
     }
@@ -72,7 +80,7 @@ struct ContentView: View {
                 case .talk: TalkTabView()
                 case .blog: BlogTabView()
                 case .news: NewsTabView()
-                case .official: FanclubTabView()
+                case .official: EmptyView()
                 case .fanclub: FanclubTabView()
                 }
             }
