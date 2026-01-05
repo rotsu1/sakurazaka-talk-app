@@ -7,27 +7,80 @@
 
 import SwiftUI
 
-struct ContentView: View {
+enum Tab: String, CaseIterable {
+    case talk = "Talk"
+    case blog = "Blog"
+    case news = "News"
+    case official = "Official"
+    case fanclub = "Fanclub"
+
+    var icon: String {
+        switch self {
+        case .talk: return "bubble.right"
+        case .blog: return "text.page"
+        case .news: return "megaphone"
+        case .official: return "triangleshape"
+        case .fanclub: return "leaf" // Representing the seed/flower logo
+        }
+    }
+}
+
+struct CustomTabBar: View {
+    @Binding var selectedTab: Tab
+
+    let activeColor = sakuraPink
+    let inactiveColor = Color.gray.opacity(0.6)
+
     var body: some View {
-        NavigationStack {
-            TabView {
-                Tab("Talk", systemImage: "bubble.right") {
-                    TalkTabView()
-                }
-                Tab("Blog", systemImage: "text.page") {
-                    BlogTabView()
-                }
-                Tab("News", systemImage: "megaphone") {
-                    NewsTabView()
-                }
-                Tab("Official", systemImage: "triangleshape") {
+        VStack(spacing: 0) {
+            Divider()
+            
+            HStack(spacing: 0) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    Button {
+                        selectedTab = tab
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 22, weight: .light))
+                            
+                            Text(tab.rawValue)
+                                .font(.system(size: 10, weight: .medium))
+                        }
+                        .frame(maxWidth: .infinity)
 
-                }
-                Tab("Fanclub", systemImage: "oval.portrait") {
-
+                        .padding(.vertical, 8)
+                        .foregroundStyle(selectedTab == tab ? activeColor : inactiveColor)
+                    }
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
+            .background(Color.white)
         }
+    }
+}
+
+
+struct ContentView: View {
+    @State private var selectedTab: Tab = .talk
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Group {
+                switch selectedTab {
+                case .talk: TalkTabView()
+                case .blog: BlogTabView()
+                case .news: NewsTabView()
+                case .official: FanclubTabView()
+                case .fanclub: FanclubTabView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            CustomTabBar(selectedTab: $selectedTab)
+        }
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
