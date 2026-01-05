@@ -99,12 +99,14 @@ let blogData = [
 
 struct BlogTabView: View {
     var body: some View {
-        HeaderView(title: "ブログ", icons: false, isBlog: true, isSubpage: false)
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(blogData) { blog in
-                    BlogItemView(blog: blog)
-                        .padding(.horizontal, 16)
+        VStack {
+            HeaderView(title: "ブログ", icons: false, isBlog: true, isSubpage: false)
+            ScrollView {
+                LazyVStack(spacing: 16) {
+                    ForEach(blogData) { blog in
+                        BlogItemView(blog: blog)
+                            .padding(.horizontal, 16)
+                    }
                 }
             }
         }

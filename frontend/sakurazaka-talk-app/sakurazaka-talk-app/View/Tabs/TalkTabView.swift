@@ -77,38 +77,40 @@ struct TalkTabView: View {
         GridItem(.flexible()),
     ]
     var body: some View {
-        HeaderView(title: "トーク", icons: true, isBlog: false, isSubpage: false)
+        VStack {
+            HeaderView(title: "トーク", icons: true, isBlog: false, isSubpage: false)
 
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(memberData, id: \.generation) { memberGroup in
-                    Section(
-                        header: GenerationHeader(title: memberGroup.generation),
-                        footer: Group {
-                            if memberGroup.generation != memberData.last?.generation {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(height: 2)
-                                    .padding(.horizontal, 20)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(memberData, id: \.generation) { memberGroup in
+                        Section(
+                            header: GenerationHeader(title: memberGroup.generation),
+                            footer: Group {
+                                if memberGroup.generation != memberData.last?.generation {
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(height: 2)
+                                        .padding(.horizontal, 20)
+                                }
                             }
-                        }
-                        ) {
-                        ForEach(memberGroup.names, id: \.self) { name in
-                            // Placeholder for member image
-                            VStack {
-                                Circle()
-                                    .fill(Color.gray.opacity(0.3))
-                                    .frame(width: 96, height: 96)
-                                Text(name)
+                            ) {
+                            ForEach(memberGroup.names, id: \.self) { name in
+                                // Placeholder for member image
+                                VStack {
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 96, height: 96)
+                                    Text(name)
+                                }
+                                .foregroundColor(sakuraPink)
+                                .padding(.bottom, 16)
                             }
-                            .foregroundColor(sakuraPink)
-                            .padding(.bottom, 16)
                         }
                     }
                 }
             }
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
     }
 }
 

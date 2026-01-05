@@ -11,12 +11,14 @@ struct NewsView: View {
     let content: String
 
     var body: some View {
-        HeaderView(title: "ニュース", icons: false, isBlog: false, isSubpage: true)
-        
-        ScrollView {
-            
+        VStack {
+            HeaderView(title: "ニュース", icons: false, isBlog: false, isSubpage: true)
+
+            ScrollView {
+                
+            }
+            .navigationBarHidden(true) 
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarHidden(true) 
-        .navigationBarBackButtonHidden(true)
     }
 }

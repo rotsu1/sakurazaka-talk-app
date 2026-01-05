@@ -126,36 +126,38 @@ struct NewsTabView: View {
     @State private var selectedTab: NewsTabs = .first
 
     var body: some View {
-        HeaderView(title: "お知らせ", icons: true, isBlog: false, isSubpage: false)
-        NewsTabButtons(selectedTab: $selectedTab)
+        VStack {
+            HeaderView(title: "お知らせ", icons: true, isBlog: false, isSubpage: false)
+            NewsTabButtons(selectedTab: $selectedTab)
 
-        ScrollView {
-            VStack(spacing: 8) {
-                if selectedTab == .first {
-                        ForEach(officialNews) { news in
-                        NewsItemView(
-                            title: news.title,
-                            tag: news.tag,
-                            content: news.content,
-                            createdAt: news.createdAt,
-                        )
-                    }
-                } else {
-                    ForEach(fanclubNews) { news in
-                        NewsItemView(
-                            title: news.title,
-                            tag: news.tag,
-                            content: news.content,
-                            createdAt: news.createdAt,
-                        )
+            ScrollView {
+                VStack(spacing: 8) {
+                    if selectedTab == .first {
+                            ForEach(officialNews) { news in
+                            NewsItemView(
+                                title: news.title,
+                                tag: news.tag,
+                                content: news.content,
+                                createdAt: news.createdAt,
+                            )
+                        }
+                    } else {
+                        ForEach(fanclubNews) { news in
+                            NewsItemView(
+                                title: news.title,
+                                tag: news.tag,
+                                content: news.content,
+                                createdAt: news.createdAt,
+                            )
+                        }
                     }
                 }
             }
+            .scrollIndicators(.hidden)
+            .navigationBarHidden(true) 
+            .navigationBarBackButtonHidden(true)
+            .padding()
         }
-        .scrollIndicators(.hidden)
-        .navigationBarHidden(true) 
-        .navigationBarBackButtonHidden(true)
-        .padding()
     }
 }
 

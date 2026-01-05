@@ -82,40 +82,43 @@ struct NotificationListView: View {
     let calendar = Calendar.current
 
     var body: some View {
-        HeaderView(title: "お知らせ", icons: false, isBlog: false, isSubpage: true)
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 12) {
-                ForEach(notificationItems) { item in
-                    NavigationLink(
-                        destination: NotificationView(notificationItem: item)
-                    ) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            let dateString = formatterSimple.string(
-                                from: item.timestamp
-                            )
-                            Text(dateString)
-                                .foregroundColor(Color(white: 0.6))
-                                .font(.system(size: 13, weight: .regular))
-                                .lineLimit(1)
-                            Text(item.title)
-                                .foregroundColor(Color(white: 0.5))
-                                .font(.system(size: 17, weight: .regular))
-                                .lineLimit(1)
-                            Text(item.content)
-                                .foregroundColor(Color(white: 0.3))
-                                .font(.system(size: 14, weight: .medium))
-                                .lineLimit(1)
+        VStack {
+            HeaderView(title: "お知らせ", icons: false, isBlog: false, isSubpage: true)
+            
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 12) {
+                    ForEach(notificationItems) { item in
+                        NavigationLink(
+                            destination: NotificationView(notificationItem: item)
+                        ) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                let dateString = formatterSimple.string(
+                                    from: item.timestamp
+                                )
+                                Text(dateString)
+                                    .foregroundColor(Color(white: 0.6))
+                                    .font(.system(size: 13, weight: .regular))
+                                    .lineLimit(1)
+                                Text(item.title)
+                                    .foregroundColor(Color(white: 0.5))
+                                    .font(.system(size: 17, weight: .regular))
+                                    .lineLimit(1)
+                                Text(item.content)
+                                    .foregroundColor(Color(white: 0.3))
+                                    .font(.system(size: 14, weight: .medium))
+                                    .lineLimit(1)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.rgb(red: 247, green: 247, blue: 247))
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.rgb(red: 247, green: 247, blue: 247))
                     }
                 }
+                .padding()
             }
-            .padding()
+            .navigationBarHidden(true) 
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarHidden(true) 
-        .navigationBarBackButtonHidden(true)
     }
 }
 

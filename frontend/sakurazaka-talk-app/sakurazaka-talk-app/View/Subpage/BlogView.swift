@@ -11,22 +11,25 @@ struct BlogView: View {
     let blog: Blog
 
     var body: some View {
-        HeaderView(title: blog.member, icons: false, isBlog: true, isSubpage: true)
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                BlogHeaderView(date: blog.createdAt, title: blog.title)
-                    .padding()
-                    .padding(.horizontal, 16)
-                Text(blog.content)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(Color(white: 0.4))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .padding(.horizontal, 16)
+        VStack {
+            HeaderView(title: blog.member, icons: false, isBlog: true, isSubpage: true)
+            
+            ScrollView {
+                LazyVStack(spacing: 16) {
+                    BlogHeaderView(date: blog.createdAt, title: blog.title)
+                        .padding()
+                        .padding(.horizontal, 16)
+                    Text(blog.content)
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundColor(Color(white: 0.4))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .padding(.horizontal, 16)
+                }
             }
+            .navigationBarHidden(true) 
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarHidden(true) 
-        .navigationBarBackButtonHidden(true)
     }
 }
 
