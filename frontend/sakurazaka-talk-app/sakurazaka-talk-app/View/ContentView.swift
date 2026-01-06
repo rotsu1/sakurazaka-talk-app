@@ -33,39 +33,36 @@ struct CustomTabBar: View {
     let inactiveColor = Color.gray.opacity(0.6)
 
     var body: some View {
-        VStack(spacing: 0) {
-            Divider()
-            
-            HStack(spacing: 0) {
-                ForEach(Tab.allCases, id: \.self) { tab in
-                    Button {
-                        if tab == .official {
-                            // Open external browser
-                            if let url = URL(string: "https://sakurazaka46.com/") {
-                                openURL(url)
-                            }
-                        } else {
-                            // Normal tab switching
-                            selectedTab = tab
+        HStack(spacing: 0) {
+            ForEach(Tab.allCases, id: \.self) { tab in
+                Button {
+                    if tab == .official {
+                        // Open external browser
+                        if let url = URL(string: "https://sakurazaka46.com/") {
+                            openURL(url)
                         }
-                    } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: tab.icon)
-                                .font(.system(size: 22, weight: .light))
-                            
-                            Text(tab.rawValue)
-                                .font(.system(size: 10, weight: .medium))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        // Note: Official tab won't ever look "active" since it redirects away
-                        .foregroundStyle(selectedTab == tab ? activeColor : inactiveColor)
+                    } else {
+                        // Normal tab switching
+                        selectedTab = tab
                     }
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22, weight: .light))
+                        
+                        Text(tab.rawValue)
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    // Note: Official tab won't ever look "active" since it redirects away
+                    .foregroundStyle(selectedTab == tab ? activeColor : inactiveColor)
                 }
             }
-            .padding(.bottom, 34) // Standard iPhone bottom safe area height
-            .background(Color.white)
         }
+        .padding(.bottom, 34) // Standard iPhone bottom safe area height
+        .padding(.horizontal, 20)
+        .background(Color(white: 0.95))
     }
 }
 
