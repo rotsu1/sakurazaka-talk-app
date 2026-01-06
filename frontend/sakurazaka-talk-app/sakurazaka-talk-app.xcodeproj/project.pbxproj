@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		42922CCC2F0C8CDC005B7B2C /* Sakuraza.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 42922CCB2F0C8CDC005B7B2C /* Sakuraza.storekit */; };
+		42922CDC2F0CA11E005B7B2C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 42922CDB2F0CA11E005B7B2C /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -15,9 +16,22 @@
 		42922CCB2F0C8CDC005B7B2C /* Sakuraza.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Sakuraza.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		42922CD22F0C9797005B7B2C /* Exceptions for "sakurazaka-talk-app" folder in "sakurazaka-talk-app" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4204ECC82F089B5700B21B75 /* sakurazaka-talk-app */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4204ECCB2F089B5700B21B75 /* sakurazaka-talk-app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				42922CD22F0C9797005B7B2C /* Exceptions for "sakurazaka-talk-app" folder in "sakurazaka-talk-app" target */,
+			);
 			path = "sakurazaka-talk-app";
 			sourceTree = "<group>";
 		};
@@ -28,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42922CDC2F0CA11E005B7B2C /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +86,7 @@
 			);
 			name = "sakurazaka-talk-app";
 			packageProductDependencies = (
+				42922CDB2F0CA11E005B7B2C /* Kingfisher */,
 			);
 			productName = "sakurazaka-talk-app";
 			productReference = 4204ECC92F089B5700B21B75 /* sakurazaka-talk-app.app */;
@@ -100,6 +116,9 @@
 			);
 			mainGroup = 4204ECC02F089B5700B21B75;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				42922CDA2F0CA11E005B7B2C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4204ECCA2F089B5700B21B75 /* Products */;
 			projectDirPath = "";
@@ -262,6 +281,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "sakurazaka-talk-app/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -293,6 +313,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "sakurazaka-talk-app/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -337,6 +358,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		42922CDA2F0CA11E005B7B2C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		42922CDB2F0CA11E005B7B2C /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42922CDA2F0CA11E005B7B2C /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4204ECC12F089B5700B21B75 /* Project object */;
 }
