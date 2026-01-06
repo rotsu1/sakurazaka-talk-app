@@ -71,57 +71,75 @@ let memberData: [MemberGroup] = [
 
 
 struct TalkTabView: View {
+    @State private var showModal = false
+    @State private var selectedMemberName: String = ""
+
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
-    var body: some View {
-        VStack {
-            HeaderView(title: "トーク", icons: true, isBlog: false, isSubpage: false)
 
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 16) {
-                    ForEach(memberData, id: \.generation) { memberGroup in
-                        Section(
-                            header: GenerationHeader(title: memberGroup.generation),
-                            footer: Group {
-                                if memberGroup.generation != memberData.last?.generation {
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.2))
-                                        .frame(height: 2)
-                                        .padding(.horizontal, 20)
-                                }
-                            }
-                            ) {
-                            ForEach(memberGroup.names, id: \.self) { name in
-                                // Placeholder for member image
-                                VStack {
-                                    if memberGroup.generation == "オンライン" {
-                                        NavigationLink(destination: TalkView()) {
-                                            VStack {
-                                                Circle()
-                                                    .fill(Color.gray.opacity(0.3))
-                                                    .frame(width: 96, height: 96)
-                                                Text(name)
-                                            }
-                                        }
-                                    } else {
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.3))
-                                            .frame(width: 96, height: 96)
-                                        Text(name)
+    var body: some View {
+        ZStack {
+            VStack {
+                HeaderView(title: "トーク", icons: true, isBlog: false, isSubpage: false)
+
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(memberData, id: \.generation) { memberGroup in
+                            Section(
+                                header: GenerationHeader(title: memberGroup.generation),
+                                footer: Group {
+                                    if memberGroup.generation != memberData.last?.generation {
+                                        Rectangle()
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(height: 2)
+                                            .padding(.horizontal, 20)
                                     }
                                 }
-                                .foregroundColor(sakuraPink)
-                                .padding(.bottom, 16)
+                                ) {
+                                ForEach(memberGroup.names, id: \.self) { name in
+                                    // Placeholder for member image
+                                    VStack {
+                                        if memberGroup.generation == "オンライン" {
+                                            NavigationLink(destination: TalkView()) {
+                                                VStack {
+                                                    Circle()
+                                                        .fill(Color.gray.opacity(0.3))
+                                                        .frame(width: 96, height: 96)
+                                                    Text(name)
+                                                }
+                                            }
+                                        } else {
+                                            Button {
+                                                showModal = true
+                                                selectedMemberName = name
+                                            } label: {
+                                                VStack {
+                                                    Circle()
+                                                        .fill(Color.gray.opacity(0.3))
+                                                        .frame(width: 96, height: 96)
+                                                    Text(name)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .foregroundColor(sakuraPink)
+                                    .padding(.bottom, 16)
+                                }
                             }
                         }
                     }
                 }
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
+
+            if showModal {
+                SubscriptionModal(isPresented: $showModal, memberName: selectedMemberName)
+            }
         }
+
     }
 }
 
