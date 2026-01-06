@@ -6,11 +6,11 @@ import (
 )
 
 type OfficialNews struct {
-	ID        int
-	Title     string
-	Tag       *string // Optional tag for the news (e.g., "Event", "Release")
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Tag       *string   `json:"tag"` // Optional tag for the news (e.g., "Event", "Release")
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (o *OfficialNews) Save(db *sql.DB) error {

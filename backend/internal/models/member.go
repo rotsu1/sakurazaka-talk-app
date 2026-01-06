@@ -6,12 +6,12 @@ import (
 )
 
 type Member struct {
-	ID         int
-	Name       string
-	Generation *int
-	AvatarURL  *string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         int       `json:"id"`
+	Name       string    `json:"name"`
+	Generation *int      `json:"generation"`
+	AvatarURL  *string   `json:"avatar_url"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 func (m *Member) Save(db *sql.DB) error {

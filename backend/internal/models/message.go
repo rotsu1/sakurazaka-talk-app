@@ -6,15 +6,15 @@ import (
 )
 
 type Message struct {
-	ID         int
-	MemberID   int
-	Type       string // Type of the message (e.g., "text", "image", "video")
-	Content    string
-	Status     string // Status of the message (e.g., "pending", "approved", "rejected")
-	VerifiedBy *int   // ID of the staff who verified the message
-	VerifiedAt *time.Time
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         int        `json:"id"`
+	MemberID   int        `json:"member_id"`
+	Type       string     `json:"type"` // Type of the message (e.g., "text", "image", "video")
+	Content    string     `json:"content"`
+	Status     string     `json:"status"`      // Status of the message (e.g., "pending", "approved", "rejected")
+	VerifiedBy *int       `json:"verified_by"` // ID of the staff who verified the message
+	VerifiedAt *time.Time `json:"verified_at"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
 func (m *Message) Save(db *sql.DB) error {

@@ -6,15 +6,15 @@ import (
 )
 
 type Blog struct {
-	ID         int
-	MemberID   int
-	Title      string
-	Content    string
-	Status     string
-	VerifiedBy *int       // Verfied by staff with manager role
-	VerifiedAt *time.Time // Verfied time by staff with manager role
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         int        `json:"id"`
+	MemberID   int        `json:"member_id"`
+	Title      string     `json:"title"`
+	Content    string     `json:"content"`
+	Status     string     `json:"status"`
+	VerifiedBy *int       `json:"verified_by"` // Verfied by staff with manager role
+	VerifiedAt *time.Time `json:"verified_at"` // Verfied time by staff with manager role
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
 func (b *Blog) Save(db *sql.DB) error {

@@ -6,13 +6,13 @@ import (
 )
 
 type Staff struct {
-	ID           int
-	MemberID     *int // Optional ID of the member this staff is associated with (e.g., manager)
-	Role         string
-	Username     string
-	PasswordHash string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           int       `json:"id"`
+	MemberID     *int      `json:"member_id"` // Optional ID of the member this staff is associated with (e.g., manager)
+	Role         string    `json:"role"`
+	Username     string    `json:"username"`
+	PasswordHash string    `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 func (s *Staff) Save(db *sql.DB) error {

@@ -6,12 +6,12 @@ import (
 )
 
 type TalkUserMember struct {
-	ID        int
-	UserID    int
-	MemberID  int
-	Status    string // Status of subscription (e.g., "active", "cancelled")
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int       `json:"id"`
+	UserID    int       `json:"user_id"`
+	MemberID  int       `json:"member_id"`
+	Status    string    `json:"status"` // Status of subscription (e.g., "active", "cancelled")
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (t *TalkUserMember) Save(db *sql.DB) error {

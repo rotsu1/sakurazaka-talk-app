@@ -6,12 +6,12 @@ import (
 )
 
 type Fanletter struct {
-	ID         int
-	MemberID   int
-	TalkUserID int
-	Content    string
-	TemplateID *int
-	CreatedAt  time.Time
+	ID         int       `json:"id"`
+	MemberID   int       `json:"member_id"`
+	TalkUserID int       `json:"talk_user_id"`
+	Content    string    `json:"content"`
+	TemplateID *int      `json:"template_id"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 func (f *Fanletter) Save(db *sql.DB) error {
