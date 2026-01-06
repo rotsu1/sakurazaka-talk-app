@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		42922CCC2F0C8CDC005B7B2C /* Sakuraza.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 42922CCB2F0C8CDC005B7B2C /* Sakuraza.storekit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4204ECC92F089B5700B21B75 /* sakurazaka-talk-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sakurazaka-talk-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		42922CCB2F0C8CDC005B7B2C /* Sakuraza.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Sakuraza.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +37,7 @@
 		4204ECC02F089B5700B21B75 = {
 			isa = PBXGroup;
 			children = (
+				42922CCB2F0C8CDC005B7B2C /* Sakuraza.storekit */,
 				4204ECCB2F089B5700B21B75 /* sakurazaka-talk-app */,
 				4204ECCA2F089B5700B21B75 /* Products */,
 			);
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42922CCC2F0C8CDC005B7B2C /* Sakuraza.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
