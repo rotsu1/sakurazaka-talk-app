@@ -34,3 +34,5 @@ Package.resolved
 # Swift Package Manager
 .swiftpm/xcode/package.xcworkspace/
 .swiftpm/configuration/
+
+*.storekit
