@@ -6,73 +6,29 @@
 //
 
 import SwiftUI
+import SwiftData
+import Kingfisher
 
-struct MemberGroup: Identifiable {
-    let id = UUID()
-    let generation: String
-    let names: [String]
-}
 
-let memberData: [MemberGroup] = [
-    MemberGroup(
-        generation: "オンライン", 
-        names: [
-            "石森 璃花",
-            "谷口 愛季",
-            "櫻坂46"
-        ]
-    ),
-    MemberGroup(
-        generation: "二期", 
-        names: [
-            "遠藤 光莉", 
-            "大沼 晶保", 
-            "大園 玲",
-            "幸阪 茉里乃",
-            "武元 唯衣",
-            "田村 保乃",
-            "藤吉 夏鈴",
-            "増本 綺良",
-            "松田 里奈",
-            "森田 ひかる",
-            "守屋 麗奈",
-            "山﨑 天"
-        ]
-    ),
-    MemberGroup(
-        generation: "三期", 
-        names: [
-            "遠藤 理子",
-            "小田倉 麗奈",
-            "小島 凪紗",
-            "中嶋 優月",
-            "的野 美青",
-            "向井 純葉",
-            "村井 優",
-            "村山 美羽",
-            "山下 瞳月"
-        ]
-    ),
-    MemberGroup(
-        generation: "四期", 
-        names: [
-            "浅井 琥珀",
-            "稲熊 陽菜",
-            "勝又 陽",
-            "佐藤 寧音",
-            "中川 千尋",
-            "松本 和子",
-            "目黒 緋彩",
-            "山川 結衣",
-            "山田 桃実"
-        ]
-    ),
-]
 
 
 struct TalkTabView: View {
+    @Query(sort: \Member.joinOrder) private var members: [Member]
+    @Environment(\.modelContext) private var modelContext
+
     @State private var showModal = false
     @State private var selectedMemberName: String = ""
+
+    private var groupedMembers: [(generation: String, list: [Member])] {
+        let grouped = Dictionary(grouping: members) { $0.joinOrder }
+        let sortedKeys = grouped.keys.sorted()
+        
+        return sortedKeys.map { key in
+            // Map the integer generation to a String label
+            let label = key == 0 ? "オンライン" : "\(key)期生"
+            return (generation: label, list: grouped[key] ?? [])
+        }
+    }
 
     let columns = [
         GridItem(.flexible()),
@@ -87,11 +43,11 @@ struct TalkTabView: View {
 
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(memberData, id: \.generation) { memberGroup in
+                        ForEach(groupedMembers, id: \.generation) { memberGroup in
                             Section(
                                 header: GenerationHeader(title: memberGroup.generation),
                                 footer: Group {
-                                    if memberGroup.generation != memberData.last?.generation {
+                                    if memberGroup.generation != groupedMembers.last?.generation {
                                         Rectangle()
                                             .fill(Color.gray.opacity(0.2))
                                             .frame(height: 2)
@@ -99,29 +55,19 @@ struct TalkTabView: View {
                                     }
                                 }
                                 ) {
-                                ForEach(memberGroup.names, id: \.self) { name in
+                                ForEach(memberGroup.list) { member in
                                     // Placeholder for member image
                                     VStack {
                                         if memberGroup.generation == "オンライン" {
                                             NavigationLink(destination: TalkView()) {
-                                                VStack {
-                                                    Circle()
-                                                        .fill(Color.gray.opacity(0.3))
-                                                        .frame(width: 96, height: 96)
-                                                    Text(name)
-                                                }
+                                                MemberSection(member: member)
                                             }
                                         } else {
                                             Button {
                                                 showModal = true
-                                                selectedMemberName = name
+                                                selectedMemberName = member.name
                                             } label: {
-                                                VStack {
-                                                    Circle()
-                                                        .fill(Color.gray.opacity(0.3))
-                                                        .frame(width: 96, height: 96)
-                                                    Text(name)
-                                                }
+                                                MemberSection(member: member)
                                             }
                                         }
                                     }
@@ -134,12 +80,41 @@ struct TalkTabView: View {
                 }
                 .scrollIndicators(.hidden)
             }
+            .padding(.bottom, 110)
 
             if showModal {
                 SubscriptionModal(isPresented: $showModal, memberName: selectedMemberName)
             }
         }
+        .task {
+            let service = DataService(modelContext: modelContext)
+            do {
+                try await service.syncMembers()
+            } catch {
+                print("❌ Sync failed: \(error)") // This will print the actual reason
+            }
+        }
 
+    }
+}
+
+struct MemberSection: View {
+    var member: Member
+
+    var body: some View {
+        VStack {
+            KFImage(URL(string: member.avatarUrl))
+                .placeholder { 
+                    Circle().fill(Color.gray.opacity(0.3))
+                }
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 96, height: 96)
+                .clipShape(Circle())
+            
+            Text(member.name)
+                .font(.system(size: 14))
+                .foregroundColor(sakuraPink)
+        }
     }
 }
 
