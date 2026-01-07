@@ -33,7 +33,20 @@ func RegisterBlogRoutes(mux *http.ServeMux, db *sql.DB) {
 }
 
 func GetBlogs(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	blogs, err := models.GetAllBlogs(db)
+	status := r.URL.Query().Get("status")
+	var (
+		blogs []*models.Blog
+		err   error
+	)
+	if status == "verified" {
+		blogs, err = models.GetVerifiedBlogs(db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		blogs, err = models.GetAllBlogs(db)
+	}
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

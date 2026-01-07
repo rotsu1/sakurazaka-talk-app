@@ -146,3 +146,44 @@ func GetAllBlogs(db *sql.DB) ([]*Blog, error) {
 	}
 	return blogs, nil
 }
+
+func GetVerifiedBlogs(db *sql.DB) ([]*Blog, error) {
+	query := `
+	SELECT 
+			id, 
+			member_id, 
+			title, 
+			content, 
+			status, 
+			verified_by, 
+			verified_at, 
+			created_at, 
+			updated_at
+	FROM blog
+	WHERE status = 'verified'`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var blogs []*Blog
+	for rows.Next() {
+		var b Blog
+		if err := rows.Scan(
+			&b.ID,
+			&b.MemberID,
+			&b.Title,
+			&b.Content,
+			&b.Status,
+			&b.VerifiedBy,
+			&b.VerifiedAt,
+			&b.CreatedAt,
+			&b.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		blogs = append(blogs, &b)
+	}
+	return blogs, nil
+}
