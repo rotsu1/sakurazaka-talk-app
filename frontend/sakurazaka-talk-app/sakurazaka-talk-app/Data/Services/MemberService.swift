@@ -32,17 +32,17 @@ class MemberService {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let dtos = try decoder.decode([MemberDTO].self, from: data)
 
+        let allMembers = try modelContext.fetch(FetchDescriptor<Member>())
+        var localMap = Dictionary(uniqueKeysWithValues: allMembers.map { ($0.id, $0) })
+
         // 2. Sync with SwiftData
         for dto in dtos {
             let stringID = String(dto.id)
             
-            // Check if member exists
-            let fetchDescriptor = FetchDescriptor<Member>(
-                predicate: #Predicate { $0.id == stringID }
-            )
-            
-            if let existingMember = try modelContext.fetch(fetchDescriptor).first {
+            if let existingMember = localMap[stringID] {
                 // UPDATE existing if changed
+                localMap.removeValue(forKey: stringID)
+                
                 if existingMember.name != dto.name
                     || existingMember.avatarUrl != dto.avatarUrl
                     || existingMember.joinOrder != dto.generation
@@ -63,8 +63,13 @@ class MemberService {
                 modelContext.insert(newMember)
             }
         }
+
+        // 3. Process Deletions (The "Remaining" Items)
+        for (_, memberToDelete) in localMap {
+            modelContext.delete(memberToDelete)
+        }
         
-        // 3. Save changes
+        // 4. Save changes
         try modelContext.save()
     }
 }

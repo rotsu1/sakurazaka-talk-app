@@ -39,16 +39,17 @@ class BlogService {
         decoder.dateDecodingStrategy = .iso8601
         let dtos = try decoder.decode([BlogDTO].self, from: data)
 
+        let allBlogs = try modelContext.fetch(FetchDescriptor<Blog>())
+
+        var localMap = Dictionary(uniqueKeysWithValues: allBlogs.map { ($0.id, $0) })
+
         // 2. Sync with SwiftData
         for dto in dtos {
             let stringID = String(dto.id)
             
-            // Check if member exists
-            let fetchDescriptor = FetchDescriptor<Blog>(
-                predicate: #Predicate { $0.id == stringID }
-            )
-            
-            if let existingBlog = try modelContext.fetch(fetchDescriptor).first {
+            if let existingBlog = localMap[stringID] {
+                localMap.removeValue(forKey: stringID)
+                
                 // UPDATE existing if changed
                 if existingBlog.title != dto.title
                     || existingBlog.content != dto.content
@@ -73,7 +74,12 @@ class BlogService {
             }
         }
         
-        // 3. Save changes
+        // 3. Process Deletions (The "Remaining" Items)
+        for (_, blogToDelete) in localMap {
+            modelContext.delete(blogToDelete)
+        }
+        
+        // 4. Save changes
         try modelContext.save()
     }
 }

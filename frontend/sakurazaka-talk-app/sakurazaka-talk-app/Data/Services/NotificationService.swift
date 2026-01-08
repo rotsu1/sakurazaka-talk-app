@@ -33,24 +33,25 @@ class NotificationService {
         decoder.dateDecodingStrategy = .iso8601
         let dtos = try decoder.decode([NotificationDTO].self, from: data)
 
+        let allNotifications = try modelContext.fetch(FetchDescriptor<Notification>())
+    
+        var localMap = Dictionary(uniqueKeysWithValues: allNotifications.map { ($0.id, $0) })
+
+        var unreadCount = try modelContext.fetch(FetchDescriptor<NotificationUnreadCount>()).first
+        if unreadCount == nil {
+            let newUnreadCount = NotificationUnreadCount(count: 0)
+            modelContext.insert(newUnreadCount)
+            unreadCount = newUnreadCount
+        }
+
         // 2. Sync with SwiftData
         for dto in dtos {
             let stringID = String(dto.id)
             
-            // Check if official news exists
-            let fetchDescriptor = FetchDescriptor<Notification>(
-                predicate: #Predicate { $0.id == stringID }
-            )
-
-            var unreadCount = try modelContext.fetch(FetchDescriptor<NotificationUnreadCount>()).first
-            if unreadCount == nil {
-                let newUnreadCount = NotificationUnreadCount(count: 0)
-                modelContext.insert(newUnreadCount)
-                unreadCount = newUnreadCount
-            }
-            
-            if let existingNotification = try modelContext.fetch(fetchDescriptor).first {
+            if let existingNotification = localMap[stringID] {
                 // UPDATE existing if changed
+                localMap.removeValue(forKey: stringID)
+
                 if existingNotification.title != dto.title
                     || existingNotification.content != dto.content
                     || existingNotification.createdAt != dto.createdAt
@@ -75,8 +76,19 @@ class NotificationService {
                 unreadCount!.count += 1
             }
         }
+
+        // 3. Process Deletions (The "Remaining" Items)
+        // Anything still left in `localMap` was NOT in the server response.
+        for (_, notificationToDelete) in localMap {
+            // If we are deleting an unread notification, we should decrease the badge count
+            if !notificationToDelete.isRead && unreadCount != nil {
+                unreadCount!.count -= 1
+            }
+            
+            modelContext.delete(notificationToDelete)
+        }
         
-        // 3. Save changes
+        // 4. Save changes
         try modelContext.save()
     }
 }

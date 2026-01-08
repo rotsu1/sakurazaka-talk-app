@@ -34,17 +34,18 @@ class OfficialNewsService {
         decoder.dateDecodingStrategy = .iso8601
         let dtos = try decoder.decode([OfficialNewsDTO].self, from: data)
 
+        let allOfficialNews = try modelContext.fetch(FetchDescriptor<OfficialNews>())
+
+        var localMap = Dictionary(uniqueKeysWithValues: allOfficialNews.map { ($0.id, $0) })
+
         // 2. Sync with SwiftData
         for dto in dtos {
             let stringID = String(dto.id)
             
-            // Check if official news exists
-            let fetchDescriptor = FetchDescriptor<OfficialNews>(
-                predicate: #Predicate { $0.id == stringID }
-            )
-            
-            if let existingOfficialNews = try modelContext.fetch(fetchDescriptor).first {
+            if let existingOfficialNews = localMap[stringID] {
                 // UPDATE existing if changed
+                localMap.removeValue(forKey: stringID)
+                
                 if existingOfficialNews.title != dto.title
                     || existingOfficialNews.tag != dto.tag
                     || existingOfficialNews.content != dto.content
@@ -67,8 +68,13 @@ class OfficialNewsService {
                 modelContext.insert(newOfficialNews)
             }
         }
+
+        // 3. Process Deletions (The "Remaining" Items)
+        for (_, officialNewsToDelete) in localMap {
+            modelContext.delete(officialNewsToDelete)
+        }
         
-        // 3. Save changes
+        // 4. Save changes
         try modelContext.save()
     }
 }
