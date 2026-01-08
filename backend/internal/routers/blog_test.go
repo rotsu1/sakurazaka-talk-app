@@ -95,7 +95,7 @@ func TestUpdateBlog(t *testing.T) {
 
 	checkStatusCode(t, rr.Code, http.StatusNoContent)
 
-	updated, _ := models.FindBlogByID(db, b.ID)
+	updated, _ := models.FindBlogByID(db, b.ID, "pending")
 	checkUpdated(t, "title", "Updated Title", updated.Title)
 }
 
@@ -116,6 +116,6 @@ func TestDeleteBlog(t *testing.T) {
 
 	checkStatusCode(t, rr.Code, http.StatusNoContent)
 
-	_, err := models.FindBlogByID(db, b.ID)
+	_, err := models.FindBlogByID(db, b.ID, "pending")
 	verifyDeleted(t, err, "blog")
 }

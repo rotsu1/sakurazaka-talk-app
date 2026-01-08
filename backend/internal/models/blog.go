@@ -17,6 +17,16 @@ type Blog struct {
 	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
+type BlogWithAuthor struct {
+	ID        int       `json:"id"`
+	MemberID  int       `json:"member_id"`
+	Author    string    `json:"author"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 func (b *Blog) Save(db *sql.DB) error {
 	query := `
 	INSERT INTO blog (
@@ -75,31 +85,33 @@ func (b *Blog) Update(db *sql.DB) error {
 	return nil
 }
 
-func FindBlogByID(db *sql.DB, id int) (*Blog, error) {
-	var b Blog
+func FindBlogByID(db *sql.DB, id int, status string) (*BlogWithAuthor, error) {
+	var b BlogWithAuthor
 	query := `
 	SELECT 
-			id, 
-			member_id, 
-			title, 
-			content, 
-			status, 
-			verified_by, 
-			verified_at, 
-			created_at, 
-			updated_at 
-	FROM blog
-	WHERE id = $1`
+			b.id, 
+			b.member_id, 
+			m.name,
+			b.title, 
+			b.content, 
+			b.status, 
+			b.created_at
+	FROM blog b
+	JOIN member m ON m.id = b.member_id
+	WHERE b.id = $1`
+	if status == "verified" {
+		query += ` AND b.status = 'verified'`
+	} else if status == "pending" {
+		query += ` AND b.status = 'pending'`
+	}
 	err := db.QueryRow(query, id).Scan(
 		&b.ID,
 		&b.MemberID,
+		&b.Author,
 		&b.Title,
 		&b.Content,
 		&b.Status,
-		&b.VerifiedBy,
-		&b.VerifiedAt,
 		&b.CreatedAt,
-		&b.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -107,83 +119,48 @@ func FindBlogByID(db *sql.DB, id int) (*Blog, error) {
 	return &b, nil
 }
 
-func GetAllBlogs(db *sql.DB) ([]*Blog, error) {
+func GetAllBlogs(db *sql.DB, status string) ([]*BlogWithAuthor, error) {
 	query := `
 	SELECT 
-			id, 
-			member_id, 
-			title, 
-			content, 
-			status, 
-			verified_by, 
-			verified_at, 
-			created_at, 
-			updated_at 
-	FROM blog`
+			b.id, 
+			b.member_id, 
+			m.name,
+			b.title, 
+			b.content, 
+			b.status, 
+			b.created_at
+	FROM blog b
+	JOIN member m ON m.id = b.member_id`
+
+	if status == "verified" {
+		query += ` WHERE status = 'verified'`
+	} else if status == "pending" {
+		query += ` WHERE status = 'pending'`
+	}
+
+	query += ` ORDER BY created_at DESC`
+
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var blogs []*Blog
+	var blogsWithAuthor []*BlogWithAuthor
 	for rows.Next() {
-		var b Blog
+		var b BlogWithAuthor
 		if err := rows.Scan(
 			&b.ID,
 			&b.MemberID,
+			&b.Author,
 			&b.Title,
 			&b.Content,
 			&b.Status,
-			&b.VerifiedBy,
-			&b.VerifiedAt,
 			&b.CreatedAt,
-			&b.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
-		blogs = append(blogs, &b)
+		blogsWithAuthor = append(blogsWithAuthor, &b)
 	}
-	return blogs, nil
-}
-
-func GetVerifiedBlogs(db *sql.DB) ([]*Blog, error) {
-	query := `
-	SELECT 
-			id, 
-			member_id, 
-			title, 
-			content, 
-			status, 
-			verified_by, 
-			verified_at, 
-			created_at, 
-			updated_at
-	FROM blog
-	WHERE status = 'verified'`
-	rows, err := db.Query(query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var blogs []*Blog
-	for rows.Next() {
-		var b Blog
-		if err := rows.Scan(
-			&b.ID,
-			&b.MemberID,
-			&b.Title,
-			&b.Content,
-			&b.Status,
-			&b.VerifiedBy,
-			&b.VerifiedAt,
-			&b.CreatedAt,
-			&b.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		blogs = append(blogs, &b)
-	}
-	return blogs, nil
+	return blogsWithAuthor, nil
 }

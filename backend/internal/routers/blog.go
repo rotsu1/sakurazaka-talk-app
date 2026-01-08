@@ -34,27 +34,15 @@ func RegisterBlogRoutes(mux *http.ServeMux, db *sql.DB) {
 
 func GetBlogs(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	status := r.URL.Query().Get("status")
-	var (
-		blogs []*models.Blog
-		err   error
-	)
-	if status == "verified" {
-		blogs, err = models.GetVerifiedBlogs(db)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	} else {
-		blogs, err = models.GetAllBlogs(db)
-	}
 
+	blogsWithAuthor, err := models.GetAllBlogs(db, status)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(blogs); err != nil {
+	if err := json.NewEncoder(w).Encode(blogsWithAuthor); err != nil {
 		http.Error(w, "Failed to encode blogs", http.StatusInternalServerError)
 	}
 }
@@ -68,7 +56,8 @@ func GetBlogByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := models.FindBlogByID(db, id)
+	status := r.URL.Query().Get("status")
+	b, err := models.FindBlogByID(db, id, status)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Blog not found", http.StatusNotFound)

@@ -3,7 +3,6 @@ package models_test
 import (
 	"backend/internal/models"
 	"testing"
-	"time"
 )
 
 // Test saving blog
@@ -55,7 +54,7 @@ func TestBlogGetAll(t *testing.T) {
 		saveBlog(t, db, blog)
 	}
 
-	returnedBlogs, err := models.GetAllBlogs(db)
+	returnedBlogs, err := models.GetAllBlogs(db, "pending")
 	assertNoError(t, err, "Failed to fetch all blogs")
 	assertCount(t, len(returnedBlogs), len(blogs), "blogs count mismatch")
 }
@@ -66,7 +65,7 @@ func TestBlogGetAllEmpty(t *testing.T) {
 	db := setupTestDB(t, tables)
 	defer db.Close()
 
-	blogs, err := models.GetAllBlogs(db)
+	blogs, err := models.GetAllBlogs(db, "pending")
 	assertNoError(t, err, "Failed to fetch all blogs")
 	assertCount(t, len(blogs), 0, "Expected blogs to be empty")
 }
@@ -86,14 +85,15 @@ func TestBlogUpdate(t *testing.T) {
 
 	// Update fields
 	b.Title = "Updated Title"
-	b.Status = "published"
+	b.Status = "verified"
 
 	err := b.Update(db)
 	assertNoError(t, err, "Failed to update blog")
 
 	// Verify update
-	updated, _ := models.FindBlogByID(db, b.ID)
-	if updated.Title != "Updated Title" || updated.Status != "published" {
+	updated, err := models.FindBlogByID(db, b.ID, "verified")
+	assertNoError(t, err, "Failed to find blog by ID")
+	if updated.Title != "Updated Title" || updated.Status != "verified" {
 		t.Errorf("Update did not persist changes correctly")
 	}
 }
@@ -108,10 +108,10 @@ func TestFindBlogByID(t *testing.T) {
 	m := createNewMember("Sugai")
 	saveMember(t, db, m)
 
-	b := createNewBlog(m.ID, "Test blog", "Hello world", "draft")
+	b := createNewBlog(m.ID, "Test blog", "Hello world", "pending")
 	saveBlog(t, db, b)
 
-	blog, err := models.FindBlogByID(db, b.ID)
+	blog, err := models.FindBlogByID(db, b.ID, "pending")
 	assertNoError(t, err, "Failed to find blog by ID")
 	assertNotNil(t, blog, "Expected blog to be found")
 	if blog.ID != b.ID {
@@ -125,7 +125,7 @@ func TestFindBlogByIDNotFound(t *testing.T) {
 	db := setupTestDB(t, tables)
 	defer db.Close()
 
-	blog, err := models.FindBlogByID(db, 9999)
+	blog, err := models.FindBlogByID(db, 9999, "pending")
 	assertError(t, err, "Expected error when searching for non-existent blog ID")
 	assertNil(t, blog, "Expected blog to be nil when not found")
 }
@@ -145,41 +145,6 @@ func TestBlogLargeContent(t *testing.T) {
 		largeContent[i] = 'a'
 	}
 
-	b := createNewBlog(m.ID, "Long Post", string(largeContent), "draft")
+	b := createNewBlog(m.ID, "Long Post", string(largeContent), "pending")
 	saveBlog(t, db, b)
-}
-
-// Test Nullable Fields
-func TestBlogVerificationFields(t *testing.T) {
-	tables := "blog, member, staff"
-	db := setupTestDB(t, tables)
-	defer db.Close()
-
-	// Insert member first to prevent foreign key violation
-	m := createNewMember("Fujiyoshi")
-	saveMember(t, db, m)
-
-	s := createNewStaff(nil, "editor", "editor", "password")
-	saveStaff(t, db, s)
-
-	now := time.Now().Truncate(time.Second)
-
-	b := createNewBlog(
-		m.ID,
-		"Verified Blog",
-		"Content",
-		"verified",
-		withVerifiedBy(s.ID),
-		withVerifiedAt(now),
-	)
-	saveBlog(t, db, b)
-
-	fetched, _ := models.FindBlogByID(db, b.ID)
-
-	if fetched.VerifiedBy == nil || *fetched.VerifiedBy != s.ID {
-		t.Errorf("Expected VerifiedBy to be %d, got %v", s.ID, fetched.VerifiedBy)
-	}
-	if fetched.VerifiedAt == nil || fetched.VerifiedAt.IsZero() {
-		t.Error("Expected VerifiedAt to be set")
-	}
 }

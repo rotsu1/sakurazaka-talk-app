@@ -98,18 +98,6 @@ func saveBlog(t *testing.T, db *sql.DB, b *models.Blog) {
 	}
 }
 
-// Optional helper functions
-func withVerifiedBy(name int) func(*models.Blog) {
-	return func(b *models.Blog) {
-		b.VerifiedBy = &name
-	}
-}
-func withVerifiedAt(t time.Time) func(*models.Blog) {
-	return func(b *models.Blog) {
-		b.VerifiedAt = &t
-	}
-}
-
 // createNewTalkUser creates new talk_user instance
 func createNewTalkUser() *models.TalkUser {
 	return &models.TalkUser{}
