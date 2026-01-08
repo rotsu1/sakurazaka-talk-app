@@ -87,7 +87,7 @@ struct TalkTabView: View {
             }
         }
         .task {
-            let service = DataService(modelContext: modelContext)
+            let service = MemberService(modelContext: modelContext)
             do {
                 try await service.syncMembers()
             } catch {
