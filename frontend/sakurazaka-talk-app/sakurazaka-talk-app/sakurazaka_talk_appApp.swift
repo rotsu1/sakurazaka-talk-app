@@ -13,7 +13,12 @@ struct sakurazaka_talk_appApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [Member.self, Blog.self])
+                .modelContainer(for: [
+                    Member.self, 
+                    Blog.self,
+                    OfficialNews.self,
+                    ]
+                )
         }
     }
 }

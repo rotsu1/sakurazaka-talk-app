@@ -70,3 +70,20 @@ class Blog {
         self.createdAt = createdAt
     }
 }
+
+@Model
+class OfficialNews {
+    @Attribute(.unique) var id: String // ID from external DB
+    var title: String
+    var tag: String
+    var content: String
+    var createdAt: Date
+
+    init(id: String, title: String, tag: String, content: String, createdAt: Date) {
+        self.id = id
+        self.title = title
+        self.tag = tag
+        self.content = content
+        self.createdAt = createdAt
+    }
+}

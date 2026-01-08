@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum NewsTabs {
     case first
@@ -19,75 +20,6 @@ struct NewsItem: Identifiable {
     let content: String
     let createdAt: Date
 }
-
-let officialNews = [
-    NewsItem(
-        title: "1月4日(日)17:00～TBS「バナナマンのせっかくグルメ！！」に松田里奈が出演！",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2026, month: 1, day: 4))!,
-    ),
-    NewsItem(
-        title: "「櫻坂チャンネル」にて「【裏側】シンガポールで開催の「AFASG25」に櫻坂46が出演！オフの時間も満喫！【Vlog】」を公開！",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 29))!,
-    ),
-    NewsItem(
-        title: "今年リリースされた楽曲を振り返るStationheadリスニングパーティー開催決定！",
-        tag: "リリース",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 27))!,
-    ),
-    NewsItem(
-        title: "LAWSON 50th Anniversary presents Special LIVE 〜櫻坂46 / 日向坂46 〜の配信が決定！配信が決定！配信視聴チケットは、12月26日（金）15：00より販売スタート！",
-        tag: "イベント情報",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 26))!,
-    ),
-    NewsItem(
-        title: "「TopYellNEO2025~2026」（12月27日(土)発売）の表紙・巻頭に石森璃花が、中面に大沼晶保と増本キラが登場！",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 26))!,
-    ),
-    NewsItem( 
-        title: "「20±SWEET2026 JANUARY」（12月26日(金)発売）に遠藤理子、谷口愛季、稲熊ひな、山川宇彩が登場！",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 25))!,
-    ),
-    NewsItem(
-        title: "アニプレックスYouTubeチャンネルにて公開の「応援大使（谷口愛季）のお気に入りアニメ『...",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 20))!,
-    ),
-    NewsItem(
-        title: "2026年放送のテレビ朝日「あざとくて何が悪いの？」内「あざと連ドラ」に田村保乃の出演が...",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 19))!,
-    ),
-    NewsItem(
-        title: "12月26日(金)20:00～FOD／Prime Videoにて配信開始のオリジナルドラマ『にこたま』に田村保乃...",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 19))!,
-    ),
-    NewsItem(
-        title: "「櫻坂チャンネル」にて「【#二期生ずっと一緒】二期生考案 MV風『紋白蝶が確かに飛んでいた』」を公開！",
-        tag: "メディア",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 17))!,
-    ),
-    NewsItem(
-        title: "櫻坂46「SAKURAZAKA46 SPORTS FESTIVAL supported by AEON CARD」、イオンカード(櫻坂46)がイベントを支援！",
-        tag: "イベント情報",
-        content: "",
-        createdAt: calendar.date(from: DateComponents(year: 2025, month: 12, day: 17))!,
-    ),
-]
 
 let fanclubNews = [
     NewsItem(
@@ -123,6 +55,9 @@ let fanclubNews = [
 ]
 
 struct NewsTabView: View {
+    @Query(sort: \OfficialNews.createdAt, order: .reverse) private var officialNews: [OfficialNews]
+    @Environment(\.modelContext) private var modelContext
+
     @State private var selectedTab: NewsTabs = .first
 
     var body: some View {
@@ -157,6 +92,13 @@ struct NewsTabView: View {
             .navigationBarHidden(true) 
             .navigationBarBackButtonHidden(true)
             .padding()
+        }
+        .task {
+            do {
+                try await OfficialNewsService(modelContext: modelContext).syncOfficialNews()
+            } catch {
+                print("Error syncing official news: \(error)")
+            }
         }
     }
 }
