@@ -20,6 +20,25 @@ func TestOfficialNewsSave(t *testing.T) {
 	}
 }
 
+// Test saving official_news with complex content
+func TestOfficialNewsContent(t *testing.T) {
+	tables := "official_news"
+	db := setupTestDB(t, tables)
+	defer db.Close()
+
+	content := `Line 1
+Line 2
+Special chars: !@#$%^&*()`
+	n := createNewOfficialNews("Content Test", nil, content)
+	saveOfficialNews(t, db, n)
+
+	saved, err := models.FindOfficialNewsByID(db, n.ID)
+	assertNoError(t, err, "Failed to find official_news")
+	if saved.Content != content {
+		t.Errorf("Content mismatch. Expected:\n%s\nGot:\n%s", content, saved.Content)
+	}
+}
+
 // Test fetching all official_news
 func TestOfficialNewsGetAll(t *testing.T) {
 	tables := "official_news"
@@ -66,14 +85,15 @@ func TestOfficialNewsUpdate(t *testing.T) {
 	n.Title = "Updated Title"
 	tag := "updated"
 	n.Tag = &tag
+	n.Content = "Updated Content"
 
 	err := n.Update(db)
 	assertNoError(t, err, "Failed to update official_news")
 
 	// Verify update
 	updated, _ := models.FindOfficialNewsByID(db, n.ID)
-	if updated.Title != "Updated Title" || *updated.Tag != "updated" {
-		t.Errorf("Update did not persist changes correctly")
+	if updated.Title != "Updated Title" || *updated.Tag != "updated" || updated.Content != "Updated Content" {
+		t.Errorf("Update did not persist changes correctly: got Title=%s, Tag=%s, Content=%s", updated.Title, *updated.Tag, updated.Content)
 	}
 }
 
