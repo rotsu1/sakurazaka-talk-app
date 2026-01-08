@@ -87,3 +87,29 @@ class OfficialNews {
         self.createdAt = createdAt
     }
 }
+
+@Model
+class Notification {
+    @Attribute(.unique) var id: String // ID from external DB
+    var title: String
+    var content: String
+    var createdAt: Date
+    var isRead: Bool
+
+    init(id: String, title: String, content: String, createdAt: Date, isRead: Bool) {
+        self.id = id
+        self.title = title
+        self.content = content
+        self.createdAt = createdAt
+        self.isRead = isRead
+    }
+}
+
+@Model
+class NotificationUnreadCount {
+    var count: Int
+
+    init(count: Int) {
+        self.count = count
+    }
+}

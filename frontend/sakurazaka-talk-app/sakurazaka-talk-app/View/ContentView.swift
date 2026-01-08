@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum Tab: String, CaseIterable {
     case talk = "Talk"
@@ -68,6 +69,7 @@ struct CustomTabBar: View {
 
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var selectedTab: Tab = .talk
 
     var body: some View {
@@ -87,6 +89,14 @@ struct ContentView: View {
                 CustomTabBar(selectedTab: $selectedTab)
             }
             .ignoresSafeArea(edges: .bottom)
+        }
+        .task {
+            let service = NotificationService(modelContext: modelContext)
+            do {
+                try await service.syncNotifications()
+            } catch {
+                print("Failed to sync notifications: \(error)")
+            }
         }
     }
 }

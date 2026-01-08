@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct NotificationItem: Identifiable, Hashable {
     let id = UUID()
@@ -16,69 +17,12 @@ struct NotificationItem: Identifiable, Hashable {
 
 let calendar = Calendar.current
 
-let notificationItems = [
-    // 1. Rena Moriya Birthday Notification
-    NotificationItem(
-        title: "守屋麗奈のバースデーレターテンプレートを公開！", 
-        content: """
-        明日1月2日(金)は守屋麗奈の誕生日🎂
-        誕生日を記念して、本人作成のバースデーレターテンプレートを、1月23日(金)までの期間限定で公開中です！
-        ぜひチェックしてください！
-        """, 
-        timestamp: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1, hour: 18, minute: 5))!
-    ),
-    
-    // 2. New Year Template Notification
-    NotificationItem(
-        title: "2026年お正月レター＆カードテンプレートを公開いたしました！", 
-        content: """
-        現在実施中の「Thanks 2025 / Hello 2026 レターキャンペーン」の対象テンプレートに追加され、2026年1月31日(土)までの期間限定公開です。
-
-        「Thanks 2025 / Hello 2026 レターキャンペーン」では、対象のテンプレートを使用して期間中にレターやカードを2通以上送ると、送ったメンバーの直筆サイン＆宛名入りリアルレターが当たるチャンス！
-
-        この一年を振り返るメッセージや新たな一年の挨拶をレターで送ってみてください！
-
-        【キャンペーン期間】
-        2025年12月25日(木)12:00～2026年1月7日(水)23:59
-
-        【景品】
-        直筆サイン＆宛名入りリアルレター
-        メンバー32名×各2名様（計64名様）
-
-        ※エントリーの際、ご希望の宛名の入力と景品希望メンバーを選択いただきます。
-        """, 
-        timestamp: calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
-    ),
-    
-    // 3. Campaign Announcement
-    NotificationItem(
-        title: "「Thanks 2025 / Hello 2026 レターキャンペーン」を実施いたします！", 
-        content: """
-        櫻坂46メッセージでは「Thanks 2025 / Hello 2026 レターキャンペーン」を実施いたします！
-        対象のテンプレートを使用して期間中にレターやカードを2通以上送ると、送ったメンバーの直筆サイン＆宛名入りリアルレターが当たるチャンス！
-
-        この一年を振り返るメッセージや新たな一年の挨拶をレターで送ってみてください！
-
-        【キャンペーン期間】
-        2025年12月25日(木)12:00～2026年1月7日(水)23:59
-
-        【景品】
-        直筆サイン＆宛名入りリアルレター
-        メンバー32名×各2名様（計64名様）
-
-        ※エントリーの際、ご希望の宛名の入力と景品希望メンバーを選択いただきます。
-
-        【参加条件】
-        ①以下エントリーページから2026年1月7日(水)23:59までにエントリーを完了
-        https://sakurazaka46.com/s/s46/form/question?cd=msgappcp251225&uid=13dd0157-85e1-4e12-9313-fe931fd251c3
-
-        ②2025年12月25日(木)12:00～2026年1月7日(水)23:59の間で、希望の対象メンバーに2通以上対象のテンプレートでレターやカードを送付していること
-        """, 
-        timestamp: calendar.date(from: DateComponents(year: 2025, month: 12, day: 25))!
-    )
-]
-
 struct NotificationListView: View {
+    @Query(sort: \Notification.createdAt) private var notifications: [Notification]
+    @Query private var unreadCounts: [NotificationUnreadCount]
+
+    @Environment(\.modelContext) private var modelContext
+    
     let calendar = Calendar.current
 
     var body: some View {
@@ -87,31 +31,40 @@ struct NotificationListView: View {
             
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 12) {
-                    ForEach(notificationItems) { item in
+                    ForEach(notifications) { notification in
                         NavigationLink(
-                            destination: NotificationView(notificationItem: item)
+                            destination: NotificationView(notification: notification)
                         ) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                let dateString = formatterSimple.string(
-                                    from: item.timestamp
+                            let dateString = formatterSimple.string(
+                                from: notification.createdAt
+                            )
+                            if notification.isRead {
+                                notificationContent(
+                                    date: dateString, 
+                                    title: notification.title, 
+                                    content: notification.content,
                                 )
-                                Text(dateString)
-                                    .foregroundColor(Color(white: 0.6))
-                                    .font(.system(size: 13, weight: .regular))
-                                    .lineLimit(1)
-                                Text(item.title)
-                                    .foregroundColor(Color(white: 0.5))
-                                    .font(.system(size: 17, weight: .regular))
-                                    .lineLimit(1)
-                                Text(item.content)
-                                    .foregroundColor(Color(white: 0.3))
-                                    .font(.system(size: 14, weight: .medium))
-                                    .lineLimit(1)
+                            } else {
+                                ZStack(alignment: .topTrailing) {
+                                    notificationContent(
+                                        date: dateString, 
+                                        title: notification.title, 
+                                        content: notification.content,
+                                    )
+                                    Circle().fill(sakuraPink).frame(width: 15, height: 15)
+                                        .offset(x: 5, y: -5)
+                                }
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.rgb(red: 247, green: 247, blue: 247))
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            if !notification.isRead {
+                                if let unreadCount = unreadCounts.first {
+                                    unreadCount.count -= 1
+                                }
+                            }
+                            notification.isRead = true
+                            try? modelContext.save()
+                        })
                     }
                 }
                 .padding()
@@ -119,6 +72,33 @@ struct NotificationListView: View {
             .navigationBarHidden(true) 
             .navigationBarBackButtonHidden(true)
         }
+        .task {
+            do {
+                try await NotificationService(modelContext: modelContext).syncNotifications()
+            } catch {
+                print("Error syncing notifications: \(error)")
+            }
+        }
+    }
+
+    func notificationContent(date: String, title: String, content: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(date)
+                .foregroundColor(Color(white: 0.6))
+                .font(.system(size: 13, weight: .regular))
+                .lineLimit(1)
+            Text(title)
+                .foregroundColor(Color(white: 0.5))
+                .font(.system(size: 17, weight: .regular))
+                .lineLimit(1)
+            Text(content)
+                .foregroundColor(Color(white: 0.3))
+                .font(.system(size: 14, weight: .medium))
+                .lineLimit(1)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.rgb(red: 247, green: 247, blue: 247))
     }
 }
 

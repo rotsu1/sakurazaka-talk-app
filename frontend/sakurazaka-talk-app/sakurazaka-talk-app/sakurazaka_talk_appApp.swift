@@ -9,14 +9,16 @@ import SwiftUI
 import SwiftData
 
 @main
-struct sakurazaka_talk_appApp: App {
+struct sakurazaka_talk_appApp: App {    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .modelContainer(for: [
-                    Member.self, 
-                    Blog.self,
-                    OfficialNews.self,
+                        Member.self, 
+                        Blog.self,
+                        OfficialNews.self,
+                        Notification.self,
+                        NotificationUnreadCount.self,
                     ]
                 )
         }

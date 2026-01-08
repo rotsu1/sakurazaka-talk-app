@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HeaderView: View {
+    @Query private var unreadCount: [NotificationUnreadCount]
+    
     let title: String
     let icons: Bool
     let isBlog: Bool
@@ -42,14 +45,17 @@ struct HeaderView: View {
                             ZStack(alignment: .topTrailing){
                                 Image(systemName: "bell")
                                     .font(.system(size: 24))
-
-                                Text("20")
-                                    .font(.caption)
-                                    .foregroundColor(Color.white)
-                                    .frame(width: 20, height: 20) 
-                                    .background(Circle().fill(sakuraPink))
-                                    .padding(4)
-                                    .offset(x: 12, y: -12)
+                                if let unreadCount = unreadCount.first?.count {
+                                    if unreadCount > 0 {
+                                    Text("\(unreadCount)")
+                                        .font(.caption)
+                                            .foregroundColor(Color.white)
+                                            .frame(width: 20, height: 20) 
+                                            .background(Circle().fill(sakuraPink))
+                                            .padding(4)
+                                            .offset(x: 12, y: -12)
+                                    }
+                                }
                             }
                         }
                         NavigationLink(destination: SettingsView()) {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NotificationView: View {
-    let notificationItem: NotificationItem
+    let notification: Notification
 
     var body: some View {
         VStack {
@@ -18,15 +18,15 @@ struct NotificationView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text(
                         formatterDetailed.string(
-                            from: notificationItem.timestamp)
+                            from: notification.createdAt)
                         )
                         .foregroundColor(Color(white: 0.6))
                         .font(.system(size: 13, weight: .regular))
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                    Text(notificationItem.title)
+                    Text(notification.title)
                         .font(.system(size: 18, weight: .medium))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(notificationItem.content)
+                    Text(notification.content)
                         .font(.system(size: 16, weight: .regular))
                 }
                 .padding()
