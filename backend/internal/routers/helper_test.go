@@ -135,8 +135,9 @@ func saveNotification(t *testing.T, db *sql.DB, n *models.Notification) {
 func createNewOfficialNews() *models.OfficialNews {
 	tag := "Info"
 	return &models.OfficialNews{
-		Title: "Test News",
-		Tag:   &tag,
+		Title:   "Test News",
+		Tag:     &tag,
+		Content: "Test Content",
 	}
 }
 

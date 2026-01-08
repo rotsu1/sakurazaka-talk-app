@@ -9,6 +9,7 @@ type OfficialNews struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
 	Tag       *string   `json:"tag"` // Optional tag for the news (e.g., "Event", "Release")
+	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -17,14 +18,16 @@ func (o *OfficialNews) Save(db *sql.DB) error {
 	query := `
 	INSERT INTO official_news (
 			title, 
-			tag
+			tag,
+			content
 	) 
-	VALUES ($1, $2) 
+	VALUES ($1, $2, $3) 
 	RETURNING id, created_at, updated_at`
 	return db.QueryRow(
 		query,
 		o.Title,
 		o.Tag,
+		o.Content,
 	).Scan(&o.ID, &o.CreatedAt, &o.UpdatedAt)
 }
 
@@ -33,12 +36,14 @@ func (o *OfficialNews) Update(db *sql.DB) error {
 	UPDATE official_news SET 
 			title = $1, 
 			tag = $2, 
+			content = $3,
 			updated_at = NOW() 
-	WHERE id = $3`
+	WHERE id = $4`
 	_, err := db.Exec(
 		query,
 		o.Title,
 		o.Tag,
+		o.Content,
 		o.ID,
 	)
 	return err
@@ -51,6 +56,7 @@ func FindOfficialNewsByID(db *sql.DB, id int) (*OfficialNews, error) {
 			id, 
 			title, 
 			tag, 
+			content,
 			created_at, 
 			updated_at 
 	FROM official_news 
@@ -59,6 +65,7 @@ func FindOfficialNewsByID(db *sql.DB, id int) (*OfficialNews, error) {
 		&o.ID,
 		&o.Title,
 		&o.Tag,
+		&o.Content,
 		&o.CreatedAt,
 		&o.UpdatedAt,
 	)
@@ -74,6 +81,7 @@ func GetAllOfficialNews(db *sql.DB) ([]*OfficialNews, error) {
 			id, 
 			title, 
 			tag, 
+			content,
 			created_at, 
 			updated_at 
 	FROM official_news`
@@ -90,6 +98,7 @@ func GetAllOfficialNews(db *sql.DB) ([]*OfficialNews, error) {
 			&o.ID,
 			&o.Title,
 			&o.Tag,
+			&o.Content,
 			&o.CreatedAt,
 			&o.UpdatedAt,
 		); err != nil {

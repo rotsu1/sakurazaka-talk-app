@@ -155,10 +155,11 @@ func saveNotification(t *testing.T, db *sql.DB, n *models.Notification) {
 }
 
 // createNewOfficialNews creates new official_news instance
-func createNewOfficialNews(title string, tag *string) *models.OfficialNews {
+func createNewOfficialNews(title string, tag *string, content string) *models.OfficialNews {
 	return &models.OfficialNews{
-		Title: title,
-		Tag:   tag,
+		Title:   title,
+		Tag:     tag,
+		Content: content,
 	}
 }
 

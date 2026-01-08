@@ -12,7 +12,7 @@ func TestOfficialNewsSave(t *testing.T) {
 	defer db.Close()
 
 	tag := "test"
-	n := createNewOfficialNews("Test OfficialNews", &tag)
+	n := createNewOfficialNews("Test OfficialNews", &tag, "test content")
 	saveOfficialNews(t, db, n)
 
 	if n.ID == 0 {
@@ -29,9 +29,9 @@ func TestOfficialNewsGetAll(t *testing.T) {
 	tag1 := "tag1"
 	tag2 := "tag2"
 	news := []*models.OfficialNews{
-		createNewOfficialNews("CDTV", &tag1),
-		createNewOfficialNews("Tokyo Dome", &tag2),
-		createNewOfficialNews("5th Aniversary", nil),
+		createNewOfficialNews("CDTV", &tag1, "content"),
+		createNewOfficialNews("Tokyo Dome", &tag2, "content"),
+		createNewOfficialNews("5th Aniversary", nil, "content"),
 	}
 	for _, n := range news {
 		saveOfficialNews(t, db, n)
@@ -59,7 +59,7 @@ func TestOfficialNewsUpdate(t *testing.T) {
 	db := setupTestDB(t, tables)
 	defer db.Close()
 
-	n := createNewOfficialNews("Original Title", nil)
+	n := createNewOfficialNews("Original Title", nil, "content")
 	saveOfficialNews(t, db, n)
 
 	// Update fields
@@ -83,7 +83,7 @@ func TestFindOfficialNewsByID(t *testing.T) {
 	db := setupTestDB(t, tables)
 	defer db.Close()
 
-	n := createNewOfficialNews("Test OfficialNews", nil)
+	n := createNewOfficialNews("Test OfficialNews", nil, "content")
 	saveOfficialNews(t, db, n)
 
 	news, err := models.FindOfficialNewsByID(db, n.ID)
