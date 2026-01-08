@@ -12,7 +12,7 @@ struct BlogView: View {
 
     var body: some View {
         VStack {
-            HeaderView(title: blog.member, icons: false, isBlog: true, isSubpage: true)
+            HeaderView(title: blog.author, icons: false, isBlog: true, isSubpage: true)
             
             ScrollView {
                 LazyVStack(spacing: 16) {
@@ -113,5 +113,5 @@ struct DiagonalLine: Shape {
 }
 
 #Preview {
-    BlogView(blog: Blog(title: "Title", content: "Content", member: "Sugai", createdAt: Date()))
+    BlogView(blog: Blog(id: "1", title: "Title", content: "Content", author: "Sugai", createdAt: Date()))
 }

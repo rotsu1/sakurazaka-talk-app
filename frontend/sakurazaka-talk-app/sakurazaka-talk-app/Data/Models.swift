@@ -47,3 +47,26 @@ class Subscription {
         self.expiryDate = expiryDate
     }
 }
+
+@Model
+class Blog {
+    @Attribute(.unique) var id: String // ID from external DB
+    var title: String
+    var content: String
+    var author: String
+    var createdAt: Date
+
+    init(
+      id: String, 
+      title: String, 
+      content: String, 
+      author: String, 
+      createdAt: Date
+    ) {
+        self.id = id
+        self.title = title
+        self.content = content
+        self.author = author
+        self.createdAt = createdAt
+    }
+}

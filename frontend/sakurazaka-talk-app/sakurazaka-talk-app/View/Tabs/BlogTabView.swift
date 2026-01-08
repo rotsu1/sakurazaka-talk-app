@@ -6,108 +6,30 @@
 //
 
 import SwiftUI
-
-struct Blog: Identifiable {
-    let id = UUID()
-    let title: String
-    let content: String
-    let member: String
-    let createdAt: Date
-}
-
-let blogData = [
-    Blog(
-        title: "#370 Instagram始めます！", 
-        content: """
-        こんばんは！
-
-
-
-
-        櫻坂46　二期生　宮城県出身
-        　　まつりちゃんこと松田里奈です。
-
-
-
-
-
-        ブログを開いていただきありがとうございます。
-
-
-
-
-
-
-        お知らせがあります！
-
-
-
-
-
-
-        わたし！！
-        """, 
-        member: "松田 里奈",
-        createdAt: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1, hour: 21, minute: 0))!
-    ),
-    Blog(
-        title: "#369 2026年スタート！", 
-        content: """
-        明けましておめでとうございます！
-
-        櫻坂46　二期生　宮崎県出身
-        　　まつりちゃんこと松田里奈です。
-
-
-
-        ブログ開いていただきありがとうございます。
-
-
-
-
-
-        年末年始も放送しているTHE TIME,! 私も元旦から出演させていただきました！
-
-
-
-        私は東京スカイツリーから初日の出中継！
-        """, 
-        member: "松田 里奈",
-        createdAt: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1, hour: 18, minute:42))!
-    ),
-    Blog(
-        title: "2026", 
-        content: """
-        ブログを開いてくださり、ありがとうございます☺︎
-
-
-        櫻坂46 四期生 埼玉県出身21歳の浅井恋乃未（あさいこのみ）です。
-
-        ※21歳になったことをすっかり忘れていて… 前回と前々回のブログで20歳と書いてしまっていました( ; ; )
-
-
-
-
-
-
-        あけましておめでとうございます！！
-        """, 
-        member: "浅井 恋乃未",
-        createdAt: calendar.date(from: DateComponents(year: 2026, month: 1, day: 1, hour: 16, minute:37))!
-    ),
-]
+import SwiftData
 
 struct BlogTabView: View {
+    @Query(sort: \Blog.createdAt, order: .reverse) private var blogs: [Blog]
+    @Environment(\.modelContext) private var modelContext
+
     var body: some View {
         VStack {
             HeaderView(title: "ブログ", icons: false, isBlog: true, isSubpage: false)
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(blogData) { blog in
+                    ForEach(blogs) { blog in
                         BlogItemView(blog: blog)
                             .padding(.horizontal, 16)
                     }
                 }
+            }
+        }
+        .task {
+            let service = BlogService(modelContext: modelContext)
+            do {
+                try await service.syncBlogs()
+            } catch {
+                print("❌ unkoSync failed: \(error)") // This will print the actual reason
             }
         }
     }
@@ -139,7 +61,7 @@ struct BlogItemView: View {
 
                     HStack {
                         Spacer()
-                        Text(blog.member)
+                        Text(blog.author)
                             .font(.system(size: 14, weight: .regular))
                             .foregroundColor(sakuraPink)
                         Text(formatterDetailed.string(from: blog.createdAt))
