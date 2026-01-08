@@ -92,6 +92,8 @@ struct NewsTabView: View {
             .navigationBarHidden(true) 
             .navigationBarBackButtonHidden(true)
             .padding()
+
+            Spacer().frame(height: 100)
         }
         .task {
             do {
