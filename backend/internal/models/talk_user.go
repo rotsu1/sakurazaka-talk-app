@@ -13,11 +13,11 @@ type TalkUser struct {
 
 func (t *TalkUser) Save(db *sql.DB) error {
 	query := `
-	INSERT INTO talk_user 
-	DEFAULT VALUES 
-	RETURNING id, created_at, updated_at`
-	// Assuming no other fields for now as per struct definition
-	return db.QueryRow(query).Scan(&t.ID, &t.CreatedAt, &t.UpdatedAt)
+	INSERT INTO talk_user (id)
+	VALUES ($1)
+	RETURNING created_at, updated_at`
+
+	return db.QueryRow(query, t.ID).Scan(&t.CreatedAt, &t.UpdatedAt)
 }
 
 func (t *TalkUser) Update(db *sql.DB) error {
@@ -75,4 +75,10 @@ func GetAllTalkUsers(db *sql.DB) ([]*TalkUser, error) {
 		users = append(users, &t)
 	}
 	return users, nil
+}
+
+func EnsureTalkUserExists(db *sql.DB, id int) error {
+	query := `INSERT INTO talk_user (id) VALUES ($1) ON CONFLICT (id) DO NOTHING`
+	_, err := db.Exec(query, id)
+	return err
 }

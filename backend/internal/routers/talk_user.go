@@ -72,6 +72,11 @@ func GetTalkUserByID(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 func CreateTalkUser(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	var tu models.TalkUser
+	if err := json.NewDecoder(r.Body).Decode(&tu); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
 	if err := tu.Save(db); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

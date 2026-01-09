@@ -77,6 +77,11 @@ func CreateTalkUserMember(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := models.EnsureTalkUserExists(db, tum.UserID); err != nil {
+		http.Error(w, "Failed to ensure user exists: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if err := tum.Save(db); err != nil {
 		switch models.ClassifyDBError(err) {
 		case models.ErrInvalidReference, models.ErrInvalidData:

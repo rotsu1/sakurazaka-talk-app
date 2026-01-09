@@ -1,6 +1,6 @@
 --- +up
 CREATE TABLE talk_user (
-    id SERIAL PRIMARY KEY,
+    id INT PRIMARY KEY,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
