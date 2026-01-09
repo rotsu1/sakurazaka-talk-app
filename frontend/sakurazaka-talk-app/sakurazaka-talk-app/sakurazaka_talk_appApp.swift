@@ -19,6 +19,7 @@ struct sakurazaka_talk_appApp: App {
                         OfficialNews.self,
                         Notification.self,
                         NotificationUnreadCount.self,
+                        Message.self,
                     ]
                 )
         }

@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SubscriptionModal: View {
+    @Environment(\.modelContext) private var modelContext
     @Binding var isPresented: Bool
-    var memberName: String?
+    var member: Member?
+    var service: SubscriptionService
 
     var body: some View {
         ZStack {
@@ -20,14 +23,14 @@ struct SubscriptionModal: View {
                 }
             
             VStack(spacing: 0) {
-                Image("profile_image")
+                Image(member?.avatarUrl ?? "profile_image")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 120, height: 120)
                     .clipShape(Circle())
                     .padding(.top, 30)
                 
-                Text(memberName ?? "")
+                Text(member?.name ?? "")
                     .font(.system(size: 20, weight: .bold))
                     .padding(.top, 15)
                 
@@ -76,7 +79,16 @@ struct SubscriptionModal: View {
                 
                 Divider()
                 
-                Button(action: { /* Purchase Logic */ }) {
+                Button(action: {
+                    Task {
+                        do {
+                            try await service.subscribe(to: member!, context: modelContext)
+                            isPresented = false // Close modal on success
+                        } catch {
+                            print("Purchase failed: \(error)")
+                        }
+                    }
+                }) {
                     Text("定期購入をはじめる")
                         .fontWeight(.medium)
                         .foregroundColor(Color(red: 0.9, green: 0.5, blue: 0.6))

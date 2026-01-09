@@ -16,17 +16,26 @@ struct TalkTabView: View {
     @Query(sort: \Member.joinOrder) private var members: [Member]
     @Environment(\.modelContext) private var modelContext
 
+    @StateObject private var subService = SubscriptionService()
+
     @State private var showModal = false
-    @State private var selectedMemberName: String = ""
+    @State private var selectedMember: Member? = nil
 
     private var groupedMembers: [(generation: String, list: [Member])] {
-        let grouped = Dictionary(grouping: members) { $0.joinOrder }
+        let grouped = Dictionary(grouping: members) { member in
+            if subService.isSubscribed(to: member) {
+                return 0
+            } else {
+                return member.joinOrder
+            }
+        }
+        
         let sortedKeys = grouped.keys.sorted()
         
         return sortedKeys.map { key in
-            // Map the integer generation to a String label
             let label = key == 0 ? "オンライン" : "\(key)期生"
-            return (generation: label, list: grouped[key] ?? [])
+            let sortedList = (grouped[key] ?? []).sorted(by: { $0.name < $1.name })
+            return (generation: label, list: sortedList)
         }
     }
 
@@ -56,16 +65,15 @@ struct TalkTabView: View {
                                 }
                                 ) {
                                 ForEach(memberGroup.list) { member in
-                                    // Placeholder for member image
                                     VStack {
-                                        if memberGroup.generation == "オンライン" {
-                                            NavigationLink(destination: TalkView()) {
+                                        if memberGroup.generation == "オンライン" || subService.isSubscribed(to: member) {
+                                            NavigationLink(destination: TalkView(member: member)) {
                                                 MemberSection(member: member)
                                             }
                                         } else {
                                             Button {
                                                 showModal = true
-                                                selectedMemberName = member.name
+                                                selectedMember = member
                                             } label: {
                                                 MemberSection(member: member)
                                             }
@@ -73,6 +81,7 @@ struct TalkTabView: View {
                                     }
                                     .foregroundColor(sakuraPink)
                                     .padding(.bottom, 16)
+                                    .id("\(member.id)-\(member.subscription?.status ?? "nil")")
                                 }
                             }
                         }
@@ -83,7 +92,7 @@ struct TalkTabView: View {
             .padding(.bottom, 110)
 
             if showModal {
-                SubscriptionModal(isPresented: $showModal, memberName: selectedMemberName)
+                SubscriptionModal(isPresented: $showModal, member: selectedMember, service: subService)
             }
         }
         .task {
