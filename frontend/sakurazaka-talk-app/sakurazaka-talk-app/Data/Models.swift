@@ -22,6 +22,9 @@ class Member {
         Date() < (subscription?.expiryDate?.addingTimeInterval(60) ?? Date())
     }
 
+    @Relationship(deleteRule: .cascade, inverse: \Message.member) 
+    var messages: [Message]? = []
+
     init(
         id: String,
         name: String,
@@ -111,5 +114,26 @@ class NotificationUnreadCount {
 
     init(count: Int) {
         self.count = count
+    }
+}
+
+@Model
+class Message {
+    @Attribute(.unique) var id: String
+    var member: Member
+    var type: String // Consider "text", "image", "voice", "video"
+    var content: String
+    var createdAt: Date
+
+    @Attribute(.externalStorage) var data: Data?
+    var isRead: Bool = false
+
+    init(id: String, member: Member, type: String, content: String, createdAt: Date, data: Data? = nil) {
+        self.id = id
+        self.member = member
+        self.type = type
+        self.content = content
+        self.createdAt = createdAt
+        self.data = data
     }
 }
